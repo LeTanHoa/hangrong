@@ -191,57 +191,57 @@ export const ShopWorkstationModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-5 bg-black/80 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-3 bg-black/80 backdrop-blur-sm animate-fade-in"
       onClick={() => store.closeModal()}
     >
       <div
-        className="relative w-full max-w-4xl h-full sm:h-auto max-h-[98dvh] sm:max-h-[92vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-2xl h-full sm:h-auto max-h-[96dvh] sm:max-h-[92vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
-        <div className={`px-3.5 sm:px-6 py-2.5 sm:py-4 bg-gradient-to-r ${shopSpec.bgGradient} border-b border-slate-700/80 flex items-center justify-between shrink-0`}>
-          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-xl sm:text-2xl shadow-inner shrink-0">
+        <div className={`px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r ${shopSpec.bgGradient} border-b border-slate-700/80 flex items-center justify-between shrink-0`}>
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-lg sm:text-xl shadow-inner shrink-0">
               {shopSpec.icon}
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <h2 className="text-base sm:text-2xl font-black text-white tracking-wide truncate">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h2 className="text-sm sm:text-base font-black text-white tracking-wide truncate">
                   {shopInfo?.name || shopSpec.title}
                 </h2>
                 {isOwned ? (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  <span className="px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                     CẤP {shopLevel} • ĐÃ MỞ
                   </span>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
-                    <Lock className="w-3 h-3" /> CHƯA MỞ
+                  <span className="px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                    <Lock className="w-2.5 h-2.5" /> CHƯA MỞ
                   </span>
                 )}
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-300 font-medium truncate mt-0.5">
+              <p className="text-[10px] sm:text-[11px] text-slate-300 font-medium truncate mt-0.5">
                 {shopSpec.badge} • Chủ: <span className="text-amber-300 font-bold">{shopInfo?.ownerName || shopSpec.ownerTitle}</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <div className="text-right hidden sm:block">
-              <span className="text-[11px] text-slate-400 font-bold block uppercase tracking-wider">Số dư hiện tại</span>
-              <span className="text-sm font-black text-amber-300">{formatVND(store.money)}</span>
+              <span className="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Số dư</span>
+              <span className="text-xs font-black text-amber-300">{formatVND(store.money)}</span>
             </div>
             <button
               onClick={() => store.closeModal()}
-              className="p-1.5 sm:p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition active:scale-95"
+              className="p-1 sm:p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition active:scale-95"
               title="Đóng"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-5">
+        <div className="flex-1 overflow-y-auto p-2.5 sm:p-3.5 space-y-2 sm:space-y-2.5 custom-scrollbar">
           {/* If shop is unowned: Show Unlock Banner */}
           {!isOwned && shopInfo && (() => {
             const reqRep = getRequiredReputationForShop(shopInfo);
@@ -422,21 +422,21 @@ export const ShopWorkstationModal: React.FC = () => {
 
           {/* Quick link for Bánh Mì cooking station if applicable */}
           {shopId === 'banh_mi' && (
-            <div className="rounded-2xl border border-orange-500/30 bg-orange-950/20 p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400">
-                  <ChefHat className="w-5 h-5" />
+            <div className="rounded-xl border border-orange-500/30 bg-orange-950/20 p-2.5 sm:p-3 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
+                  <ChefHat className="w-4 h-4" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-white">Bếp Bánh Mì Mini & Danh Sách Đơn Hàng</h4>
-                  <p className="text-xs text-slate-400">Mở trạm nấu để chuẩn bị bánh mì theo công thức và phục vụ đơn hàng chờ.</p>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold text-white truncate">Bếp Bánh Mì Mini & Đơn Hàng</h4>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 truncate">Chuẩn bị món theo công thức phục vụ khách chờ.</p>
                 </div>
               </div>
               <button
                 onClick={() => store.openCookingStation()}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:brightness-110 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-orange-950/40"
+                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:brightness-110 text-white font-bold text-xs flex items-center gap-1 shadow shrink-0 active:scale-95 transition"
               >
-                Vào Bếp Nấu <ArrowRight className="w-3.5 h-3.5" />
+                <span>Vào Bếp</span> <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           )}
@@ -449,27 +449,27 @@ export const ShopWorkstationModal: React.FC = () => {
             const canUpgrade = store.level >= reqLevel && store.money >= upgradeCost;
 
             return (
-              <div className="relative overflow-hidden rounded-2xl border border-sky-500/40 bg-gradient-to-r from-sky-950/40 via-slate-900 to-indigo-950/40 p-4 shadow-lg">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-xl shrink-0">
+              <div className="relative overflow-hidden rounded-xl border border-sky-500/40 bg-gradient-to-r from-sky-950/40 via-slate-900 to-indigo-950/40 p-2.5 sm:p-3 shadow-md">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-base shrink-0">
                       ⚡
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-sky-500 text-white">
-                          NÂNG CẤP MẶT BẰNG
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded bg-sky-500 text-white">
+                          NÂNG CẤP
                         </span>
                         <span className="text-xs font-bold text-sky-300">
-                          Lên Cấp {nextLevel}/{MAX_SHOP_LEVEL}
+                          Cấp {nextLevel}/{MAX_SHOP_LEVEL}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 mt-0.5">
-                        Tăng <span className="text-emerald-400 font-bold">+15% thù lao</span> mọi dịch vụ & nhận thêm hoa hồng thụ động mỗi ngày.
+                      <p className="text-[10px] sm:text-[11px] text-slate-300 mt-0.5 truncate">
+                        Tăng <strong className="text-emerald-400">+15% thù lao</strong> & hoa hồng thụ động mỗi ngày.
                       </p>
-                      <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                      <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
                         <span className={store.level >= reqLevel ? 'text-emerald-400 font-semibold' : 'text-amber-400'}>
-                          Yêu cầu: Cấp {reqLevel} {store.level >= reqLevel ? '✓' : `(hiện có: ${store.level})`}
+                          Yêu cầu: Cấp {reqLevel} {store.level >= reqLevel ? '✓' : `(có: ${store.level})`}
                         </span>
                         <span>•</span>
                         <span>Chi phí: <strong className="text-amber-300">{formatVND(upgradeCost)}</strong></span>
@@ -485,14 +485,14 @@ export const ShopWorkstationModal: React.FC = () => {
                       }
                     }}
                     disabled={!canUpgrade}
-                    className={`shrink-0 px-4 py-2.5 rounded-xl font-bold text-xs transition shadow-md active:scale-95 flex items-center gap-1.5 ${
+                    className={`shrink-0 px-3 py-1.5 rounded-lg font-bold text-xs transition shadow active:scale-95 flex items-center gap-1 ${
                       canUpgrade
                         ? 'bg-gradient-to-r from-sky-500 to-indigo-600 hover:brightness-110 text-white shadow-sky-950/50'
                         : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
                     }`}
                   >
-                    <TrendingUp className="w-4 h-4" />
-                    Nâng Cấp ({formatVND(upgradeCost)})
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    <span>Nâng Cấp ({formatVND(upgradeCost)})</span>
                   </button>
                 </div>
               </div>
@@ -501,56 +501,56 @@ export const ShopWorkstationModal: React.FC = () => {
 
           {/* Shop Assigned Staff Card */}
           {isOwned && (
-            <div className="relative overflow-hidden rounded-2xl border border-purple-500/40 bg-gradient-to-r from-purple-950/40 via-slate-900 to-slate-950 p-4 shadow-lg">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center shrink-0 overflow-hidden">
+            <div className="relative overflow-hidden rounded-xl border border-purple-500/40 bg-gradient-to-r from-purple-950/40 via-slate-900 to-slate-950 p-2.5 sm:p-3 shadow-md">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center shrink-0 overflow-hidden">
                     {assignedStaff ? (
                       <img
                         src={`/assets/characters/${assignedStaff.id}.png`}
                         alt={assignedStaff.name}
-                        className="w-full h-full object-contain p-1"
+                        className="w-full h-full object-contain p-0.5"
                       />
                     ) : (
-                      <Users className="w-6 h-6 text-purple-400" />
+                      <Users className="w-5 h-5 text-purple-400" />
                     )}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500 text-white">
-                        NHÂN VIÊN TRỰC QUẦY
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded bg-purple-500 text-white">
+                        NHÂN SỰ TRỰC
                       </span>
                       {assignedStaff && (
-                        <span className="text-xs font-bold text-emerald-300 flex items-center gap-1">
-                          <Check className="w-3.5 h-3.5" /> Đang tự động phục vụ khách
+                        <span className="text-[10px] font-bold text-emerald-300 flex items-center gap-0.5">
+                          <Check className="w-3 h-3" /> Tự phục vụ
                         </span>
                       )}
                     </div>
                     {assignedStaff ? (
                       <div>
-                        <h4 className="text-sm font-black text-white mt-0.5">
-                          {assignedStaff.name} <span className="text-xs font-normal text-slate-300">({assignedStaff.title})</span>
+                        <h4 className="text-xs font-black text-white mt-0.5 truncate">
+                          {assignedStaff.name} <span className="text-[10px] font-normal text-slate-300">({assignedStaff.title})</span>
                         </h4>
-                        <p className="text-xs text-purple-300/90 font-medium">
-                          ⚡ Tự động phục vụ khách yêu cầu của tiệm • Thưởng hiệu suất: +{Math.round(assignedStaff.efficiencyBonus * 100)}%
+                        <p className="text-[10px] text-purple-300/90 truncate">
+                          ⚡ Hiệu suất: +{Math.round(assignedStaff.efficiencyBonus * 100)}%
                         </p>
                       </div>
                     ) : (
                       <div>
-                        <h4 className="text-sm font-bold text-white mt-0.5">
-                          Chưa phân công nhân viên tới tiệm này
+                        <h4 className="text-xs font-bold text-white mt-0.5">
+                          Chưa phân công ai trực
                         </h4>
-                        <p className="text-xs text-slate-400">
-                          Điều phối nhân viên đã thuê để tự động hóa phục vụ và mang về doanh thu thụ động.
+                        <p className="text-[10px] text-slate-400 truncate">
+                          Điều phối nhân viên đã thuê để tự phục vụ khách.
                         </p>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
                   {hiredStaffList.length > 0 ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <select
                         value={assignedStaff?.id || ''}
                         onChange={(e) => {
@@ -561,30 +561,30 @@ export const ShopWorkstationModal: React.FC = () => {
                             store.assignStaffToShop(newStaffId, shopId);
                           }
                         }}
-                        className="bg-slate-950 border border-purple-500/50 rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:ring-1 focus:ring-purple-400"
+                        className="bg-slate-950 border border-purple-500/50 rounded-lg px-2 py-1 text-xs text-white font-bold focus:outline-none focus:ring-1 focus:ring-purple-400"
                       >
-                        <option value="">-- Chưa có ai trực --</option>
+                        <option value="">-- Chưa có ai --</option>
                         {hiredStaffList.map((st) => (
                           <option key={st.id} value={st.id}>
-                            {st.name} {store.staffAssignments?.[st.id] === shopId ? '(Đang trực tại đây)' : ''}
+                            {st.name} {store.staffAssignments?.[st.id] === shopId ? '(Trực)' : ''}
                           </option>
                         ))}
                       </select>
                       {assignedStaff && (
                         <button
                           onClick={() => store.unassignStaff(assignedStaff.id)}
-                          className="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition"
+                          className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition"
                         >
-                          Thu hồi
+                          Hủy
                         </button>
                       )}
                     </div>
                   ) : (
                     <button
                       onClick={() => store.openModal('SMARTPHONE', 'STAFF')}
-                      className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1.5 shadow transition"
+                      className="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1 shadow transition"
                     >
-                      <Users className="w-3.5 h-3.5" /> Tuyển Nhân Sự
+                      <Users className="w-3 h-3" /> Tuyển NV
                     </button>
                   )}
                 </div>
@@ -594,36 +594,32 @@ export const ShopWorkstationModal: React.FC = () => {
 
           {/* Waiting Customer Banner if active */}
           {store.shopCustomerRequests[shopId] && (
-            <div className="relative overflow-hidden rounded-2xl border-2 border-amber-500/60 bg-gradient-to-r from-amber-950/60 via-slate-900 to-orange-950/60 p-4 shadow-xl">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-3xl shrink-0">
+            <div className="relative overflow-hidden rounded-xl border border-amber-500/60 bg-gradient-to-r from-amber-950/60 via-slate-900 to-orange-950/60 p-2.5 sm:p-3 shadow-md">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-xl shrink-0">
                     {store.shopCustomerRequests[shopId].serviceIcon}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500 text-slate-950">
-                        KHÁCH ĐANG ĐỢI TRƯỚC TIỆM
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded bg-amber-500 text-slate-950">
+                        KHÁCH ĐANG CHỜ
                       </span>
-                      <span className="text-xs font-bold text-amber-300">
+                      <span className="text-xs font-bold text-amber-300 truncate">
                         {store.shopCustomerRequests[shopId].customerName}
                       </span>
                     </div>
-                    <h4 className="text-sm font-black text-white mt-0.5">
+                    <h4 className="text-xs sm:text-sm font-black text-white mt-0.5 truncate">
                       Yêu cầu: &ldquo;{store.shopCustomerRequests[shopId].serviceName}&rdquo;
                     </h4>
-                    <p className="text-xs text-slate-300 italic">
-                      &ldquo;{store.shopCustomerRequests[shopId].customerQuote}&rdquo;
-                    </p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="text-xs text-slate-400 block font-bold">Thù lao</span>
-                  <span className="text-base font-black text-emerald-400">
+                  <span className="text-xs font-black text-emerald-400">
                     +{formatVND(store.shopCustomerRequests[shopId].payout)}
                   </span>
-                  <span className="text-[11px] font-bold text-amber-300 block">
+                  <span className="text-[10px] font-bold text-amber-300 ml-1.5">
                     +{store.shopCustomerRequests[shopId].xpReward} XP
                   </span>
                 </div>
@@ -633,26 +629,23 @@ export const ShopWorkstationModal: React.FC = () => {
 
           {/* Specialization Services Grid */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-orange-400" />
-                Thao Tác Chuyên Ngành Của Tiệm
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs sm:text-sm font-extrabold text-white flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                Nghiệp Vụ Của Tiệm ({shopSpec.services.length})
               </h3>
-              <span className="text-xs text-slate-400">
-                {shopSpec.services.length} nghiệp vụ có thể phục vụ
-              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
               {shopSpec.services.map((service) => {
                 const canAfford = service.cost === 0 || store.money >= service.cost;
                 const isRequested = store.shopCustomerRequests[shopId]?.serviceId === service.id;
                 return (
                   <div
                     key={service.id}
-                    className={`rounded-2xl border transition-all p-4 flex flex-col justify-between ${
+                    className={`rounded-xl border transition-all p-2.5 flex flex-col justify-between ${
                       isRequested
-                        ? 'border-amber-400 bg-amber-950/20 shadow-lg shadow-amber-950/40 ring-1 ring-amber-400/50'
+                        ? 'border-amber-400 bg-amber-950/20 shadow-md ring-1 ring-amber-400/50'
                         : isOwned
                           ? 'bg-slate-800/60 border-slate-700/80 hover:border-orange-500/50 hover:bg-slate-800'
                           : 'bg-slate-900/40 border-slate-800/80 opacity-75'
@@ -660,71 +653,49 @@ export const ShopWorkstationModal: React.FC = () => {
                   >
                     <div>
                       {/* Service Top Info */}
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-2xl p-2 rounded-xl bg-slate-900/80 border border-slate-700/60 shrink-0">
+                      <div className="flex items-start justify-between gap-1.5 mb-1.5">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-lg p-1 rounded-lg bg-slate-900/80 border border-slate-700/60 shrink-0">
                             {service.icon}
                           </span>
-                          <div>
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300">
-                                {service.category}
-                              </span>
-                              {isRequested && (
-                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-amber-400 text-slate-950 animate-pulse">
-                                  ⭐ KHÁCH ĐANG ĐỢI
-                                </span>
-                              )}
-                            </div>
-                            <h4 className="text-sm font-extrabold text-white mt-1 leading-snug">{service.name}</h4>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-extrabold text-white truncate">{service.name}</h4>
+                            <span className="text-[9px] text-slate-400">{service.category}</span>
                           </div>
                         </div>
 
                         <div className="text-right shrink-0">
-                          <span className="text-sm font-black text-emerald-400 block">+{formatVND(service.payout)}</span>
-                          <span className="text-[11px] font-bold text-amber-300">+{service.xpReward} XP</span>
+                          <span className="text-xs font-black text-emerald-400 block">+{formatVND(service.payout)}</span>
                         </div>
                       </div>
 
-                      <p className="text-xs text-slate-300 leading-relaxed line-clamp-2 my-2">{service.description}</p>
-
-                      {/* Step chips */}
-                      <div className="flex flex-wrap gap-1.5 my-2.5">
-                        {service.stepNames.map((step, idx) => (
-                          <span key={idx} className="text-[10px] font-semibold text-slate-400 bg-slate-900/70 px-2 py-0.5 rounded border border-slate-800">
-                            {idx + 1}. {step}
-                          </span>
-                        ))}
-                      </div>
+                      <p className="text-[10px] text-slate-300 line-clamp-1 my-1">{service.description}</p>
                     </div>
 
                     {/* Bottom Action Footer */}
-                    <div className="pt-2 border-t border-slate-700/50 flex items-center justify-between gap-3 mt-1">
-                      <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                        <Timer className="w-3.5 h-3.5 text-slate-500" />
+                    <div className="pt-1.5 border-t border-slate-700/50 flex items-center justify-between gap-2 mt-1">
+                      <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                        <Timer className="w-3 h-3 text-slate-500" />
                         <span>{service.durationSeconds}s</span>
-                        {service.cost > 0 && (
-                          <span className="text-slate-400 ml-2">
-                            Vốn: <strong className="text-slate-300">{formatVND(service.cost)}</strong>
-                          </span>
-                        )}
                       </div>
 
                       <button
                         onClick={() => handleStartService(service)}
-                        disabled={!isOwned || isServing || !canAfford}
-                        className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md active:scale-95 ${
+                        disabled={!isOwned || !canAfford || isServing}
+                        className={`px-3 py-1 rounded-lg font-bold text-xs transition active:scale-95 flex items-center gap-1 shadow ${
                           !isOwned
-                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-                            : isServing
-                              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                              : !canAfford
-                                ? 'bg-rose-950/50 text-rose-400 border border-rose-800/50 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 hover:brightness-110 shadow-orange-950/40'
+                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                            : !canAfford
+                              ? 'bg-rose-950 text-rose-400 border border-rose-800 cursor-not-allowed'
+                              : isServing
+                                ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
+                                : isRequested
+                                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black animate-pulse'
+                                  : 'bg-gradient-to-r from-orange-600 to-amber-600 hover:brightness-110 text-white'
                         }`}
                       >
-                        <Play className="w-3.5 h-3.5 fill-current" />
-                        {isServing ? 'Đang Xử Lý...' : 'Tiến Hành'}
+                        <Play className="w-3 h-3" />
+                        <span>Thực hiện</span>
                       </button>
                     </div>
                   </div>
@@ -734,16 +705,16 @@ export const ShopWorkstationModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Modal Footer */}
-        <div className="px-6 py-3.5 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-          <div className="flex items-center gap-2">
-            <Award className="w-4 h-4 text-amber-400" />
-            <span>Phục vụ khách hàng chuyên nghiệp để tích luỹ tiền mặt & nâng hạng danh tiếng con phố!</span>
+        {/* Modal Footer Tip */}
+        <div className="px-3 py-2 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 shrink-0">
+          <div className="flex items-center gap-1.5 truncate">
+            <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="truncate">Phục vụ khách hàng chuyên nghiệp để tích lũy tiền mặt & nâng hạng phố!</span>
           </div>
 
           <button
             onClick={() => store.closeModal()}
-            className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition"
+            className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition shrink-0 ml-2"
           >
             Đóng
           </button>

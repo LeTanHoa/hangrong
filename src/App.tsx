@@ -1,16 +1,13 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { useGameStore } from './stores/gameStore';
-import { TopHUD } from './components/TopHUD';
-import { OrderQueueHUD } from './components/OrderQueueHUD';
+import { ExecutiveSidebar } from './components/ExecutiveSidebar';
 import { CookingModal } from './components/CookingModal';
 import { SmartphoneModal } from './components/SmartphoneModal';
 import { DayEndReportModal } from './components/DayEndReportModal';
 import { ShopWorkstationModal } from './components/ShopWorkstationModal';
 import { TutorialOverlay } from './components/TutorialOverlay';
-import { MobileControls } from './components/MobileControls';
 import { ToastContainer } from './components/ToastContainer';
 import { OrientationHint } from './components/OrientationHint';
-import { StoreOverviewWidget } from './components/StoreOverviewWidget';
 
 const GameCanvas = lazy(() =>
   import('./components/GameCanvas').then((module) => ({ default: module.GameCanvas })),
@@ -40,32 +37,25 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-slate-950 select-none">
-      {/* 2D Phaser Canvas Simulation World */}
-      <Suspense fallback={<div className="absolute inset-0 bg-slate-950" />}>
-        <GameCanvas />
-      </Suspense>
+    <main className="relative w-screen h-screen overflow-hidden bg-slate-950 select-none flex">
+      {/* Executive Sidebar Dashboard on the Left */}
+      <ExecutiveSidebar />
 
-      {/* Top Header HUD (Money, Level, Time, Weather, V-Phone) */}
-      <TopHUD />
+      {/* Main Street Game World - 100% Clean & Visible on the Right */}
+      <div className="flex-1 h-full relative overflow-hidden flex items-center justify-center lg:ml-72">
+        <Suspense fallback={<div className="absolute inset-0 bg-slate-950" />}>
+          <GameCanvas />
+        </Suspense>
 
-      {/* Store & Staff Monitoring Sidebar Widget (fills empty space on the left) */}
-      <StoreOverviewWidget />
+        {/* 10-Step Beginner Tutorial Overlay */}
+        <TutorialOverlay />
 
-      {/* Active Orders Floating Ribbon */}
-      <OrderQueueHUD />
+        {/* Dynamic Floating Toast Alerts */}
+        <ToastContainer />
 
-      {/* Virtual D-Pad & Controls for Mobile / Touch screens */}
-      <MobileControls />
-
-      {/* 10-Step Beginner Tutorial Overlay */}
-      <TutorialOverlay />
-
-      {/* Dynamic Floating Toast Alerts */}
-      <ToastContainer />
-
-      {/* Mobile Landscape Orientation Helper */}
-      <OrientationHint />
+        {/* Mobile Landscape Orientation Helper */}
+        <OrientationHint />
+      </div>
 
       {/* Modals */}
       {store.activeModal === 'COOKING' && <CookingModal />}
