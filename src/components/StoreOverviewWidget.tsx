@@ -19,7 +19,7 @@ import {
 export const StoreOverviewWidget: React.FC = () => {
   const store = useGameStore();
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    return typeof window !== 'undefined' && window.innerWidth < 768;
+    return typeof window !== 'undefined' && (window.innerWidth < 1024 || window.innerHeight < 550);
   });
 
   if (store.activeModal) return null;

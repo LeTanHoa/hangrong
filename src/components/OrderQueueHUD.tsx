@@ -7,7 +7,9 @@ import { ChefHat, CheckCircle2, X, ChevronDown, ChevronUp, Bell } from 'lucide-r
 
 export const OrderQueueHUD: React.FC = () => {
   const store = useGameStore();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return typeof window !== 'undefined' && (window.innerWidth < 768 || window.innerHeight < 550);
+  });
 
   if (store.activeModal) return null;
 
