@@ -139,73 +139,78 @@ export const SmartphoneModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-1 sm:p-3 bg-black/80 backdrop-blur-sm animate-fadeIn"
       onPointerDown={(e) => e.stopPropagation()}
       onClick={() => store.closeModal()}
     >
-      {/* Smartphone Outer Shell */}
+      {/* Smartphone Outer Shell - Master-Detail 2-Column Split */}
       <div
-        className="relative w-full max-w-3xl h-full sm:h-[92vh] sm:max-h-[720px] bg-slate-950 border-0 sm:border-4 border-slate-700/80 rounded-none sm:rounded-[32px] shadow-2xl shadow-black overflow-hidden flex flex-col pointer-events-auto"
+        className="relative w-full max-w-4xl h-[94vh] sm:h-[88vh] bg-slate-950 border border-slate-700/80 rounded-2xl shadow-2xl shadow-black overflow-hidden flex flex-col pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
       >
-        {/* Phone Speaker Notch (hidden on mobile full-bleed) */}
-        <div className="hidden sm:flex w-full h-6 bg-slate-900 items-center justify-center shrink-0 border-b border-slate-800">
-          <div className="w-16 h-1.5 bg-slate-700 rounded-full" />
-        </div>
-
-        {/* Phone Top Bar */}
-        <div className="flex items-center justify-between px-3.5 sm:px-5 py-2 bg-slate-900 border-b border-slate-800 shrink-0 pt-[calc(0.5rem+env(safe-area-inset-top,0px))] sm:pt-2">
+        {/* Phone Slim Header Bar */}
+        <div className="flex items-center justify-between px-3 sm:px-4 py-2 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border-b border-slate-800 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="font-extrabold text-sm sm:text-base text-orange-400 tracking-wide truncate">
-              ĐIỆN THOẠI HÀNG RONG
+            <span className="text-base sm:text-lg">📱</span>
+            <span className="font-black text-xs sm:text-sm text-orange-400 tracking-wider uppercase truncate">
+              Điện Thoại Hàng Rong
             </span>
             <span className="hidden sm:inline text-[11px] text-slate-400 font-medium truncate">| {store.playerName}</span>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <span className="text-xs text-amber-300 font-bold bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/40">
+            <span className="text-xs text-amber-300 font-black bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/40">
               {formatVND(store.money)}
             </span>
             <button
               onClick={() => store.closeModal()}
-              className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition active:scale-95"
+              className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition active:scale-95"
+              title="Đóng"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Phone Navigation Apps Ribbon */}
-        <div className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-slate-900/90 border-b border-slate-800 overflow-x-auto shrink-0 scrollbar-none touch-pan-x">
-          {navApps.map((app) => {
-            const Icon = app.icon;
-            const isActive = currentApp === app.id;
-            const hasNotification =
-              app.id === 'QUESTS' && store.quests.some((q) => q.completed && !q.claimed);
+        {/* 2-Column Landscape Split Body */}
+        <div className="flex-1 grid grid-cols-12 min-h-0 overflow-hidden">
+          {/* CỘT TRÁI (26% - 30%): DOCK ỨNG DỤNG DỌC (Dễ chạm bằng ngón cái trái) */}
+          <div className="col-span-4 sm:col-span-3 border-r border-slate-800 bg-slate-900/60 p-1.5 sm:p-2 flex flex-col gap-1 overflow-y-auto custom-scrollbar shrink-0">
+            <div className="text-[9px] font-black uppercase text-slate-400 px-1 py-0.5 tracking-wider">
+              Ứng Dụng ({navApps.length})
+            </div>
+            {navApps.map((app) => {
+              const Icon = app.icon;
+              const isActive = currentApp === app.id;
+              const hasNotification =
+                app.id === 'QUESTS' && store.quests.some((q) => q.completed && !q.claimed);
 
-            return (
-              <button
-                key={app.id}
-                onClick={() => store.setSmartphoneApp(app.id)}
-                className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border ${
-                  isActive
-                    ? 'bg-orange-600 border-orange-400 text-white shadow-md'
-                    : 'bg-slate-800/80 hover:bg-slate-800 border-slate-700 text-slate-300'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : app.color}`} />
-                <span>{app.label}</span>
-                {hasNotification && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <button
+                  key={app.id}
+                  onClick={() => {
+                    sounds.playClick();
+                    store.setSmartphoneApp(app.id);
+                  }}
+                  className={`relative flex items-center gap-2 px-2.5 py-2 rounded-xl text-left font-bold transition text-xs border ${
+                    isActive
+                      ? 'bg-orange-600/90 border-orange-400 text-white shadow'
+                      : 'bg-slate-900/70 hover:bg-slate-800/80 border-slate-800/80 text-slate-300'
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : app.color}`} />
+                  <span className="truncate flex-1 text-[11px] sm:text-xs">{app.label}</span>
+                  {hasNotification && (
+                    <span className="w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white animate-pulse shrink-0" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Phone App Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 bg-slate-950 text-slate-200">
+          {/* CỘT PHẢI (70% - 74%): BÀN LÀM VIỆC ỨNG DỤNG CHI TIẾT */}
+          <div className="col-span-8 sm:col-span-9 p-2.5 sm:p-3 overflow-y-auto custom-scrollbar bg-slate-950 text-slate-200">
           {/* ================= 1. MARKET (CHỢ ĐẦU MỐI) ================= */}
           {currentApp === 'MARKET' && (
             <div className="flex flex-col gap-4">
@@ -1295,6 +1300,7 @@ export const SmartphoneModal: React.FC = () => {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
