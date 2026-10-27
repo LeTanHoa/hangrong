@@ -1066,13 +1066,13 @@ export class StreetScene extends Phaser.Scene {
     this.screenNavGroup.clear(true, true);
 
     // 1. LEFT ARROW BUTTON (‹) at x: 52, y: 530
-    const leftBtnBg = this.add.circle(52, 530, 40, 0x0f172a, 0.88).setStrokeStyle(3.5, 0xf59e0b).setDepth(600);
+    const leftBtnBg = this.add.circle(52, 530, 40, 0x0f172a, 0.88).setStrokeStyle(3.5, 0xf59e0b).setDepth(1500);
     const leftArrow = this.add.text(52, 526, '‹', {
       fontFamily: "'Segoe UI', Arial, sans-serif",
       fontSize: '56px',
       fontStyle: 'bold',
       color: '#fde047',
-    }).setOrigin(0.5).setDepth(601);
+    }).setOrigin(0.5).setDepth(1501);
 
     leftBtnBg.setInteractive({ useHandCursor: true });
     leftArrow.setInteractive({ useHandCursor: true });
@@ -1096,13 +1096,13 @@ export class StreetScene extends Phaser.Scene {
     });
 
     // 2. RIGHT ARROW BUTTON (›) at x: width - 52, y: 530
-    const rightBtnBg = this.add.circle(width - 52, 530, 40, 0x0f172a, 0.88).setStrokeStyle(3.5, 0xf59e0b).setDepth(600);
+    const rightBtnBg = this.add.circle(width - 52, 530, 40, 0x0f172a, 0.88).setStrokeStyle(3.5, 0xf59e0b).setDepth(1500);
     const rightArrow = this.add.text(width - 52, 526, '›', {
       fontFamily: "'Segoe UI', Arial, sans-serif",
       fontSize: '56px',
       fontStyle: 'bold',
       color: '#fde047',
-    }).setOrigin(0.5).setDepth(601);
+    }).setOrigin(0.5).setDepth(1501);
 
     rightBtnBg.setInteractive({ useHandCursor: true });
     rightArrow.setInteractive({ useHandCursor: true });

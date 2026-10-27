@@ -192,7 +192,7 @@ const MAP_DETAILS: Record<string, Pick<LocationArea, 'mapProps' | 'expansionPoin
   sidewalk_start: {
     mapProps: [
       { id: 'sign', assetKey: 'sign_sidewalk', x: 100, y: 720, scale: 1.0, interactive: true, name: 'Biển Vỉa Hè Khởi Nghiệp', dialogue: '📍 Vỉa Hè Khởi Nghiệp: Nơi bắt đầu giấc mơ ẩm thực đường phố!' },
-      { id: 'tree_1', assetKey: 'prop_tree', x: 80, y: 600, scale: 1.4, interactive: true, name: 'Cây Bàng Cổ Thụ', dialogue: '🌳 Cây bàng râm mát che chở bà con buôn gánh bán bưng!' },
+      { id: 'tree_1', assetKey: 'prop_tree', x: 180, y: 590, scale: 1.4, interactive: true, name: 'Cây Bàng Cổ Thụ', dialogue: '🌳 Cây bàng râm mát che chở bà con buôn gánh bán bưng!' },
       { id: 'planter_1', assetKey: 'prop_planter', x: 480, y: 690, scale: 1.1, interactive: true, name: 'Bồn Cây Cảnh Vỉa Hè', dialogue: '🪴 Bồn cây xanh tươi tô điểm góc phố khởi nghiệp.' },
       { id: 'tea_station_1', assetKey: 'prop_tea_station', x: 940, y: 670, scale: 1.1, interactive: true, name: 'Quầy Trà Đá Vỉa Hè', dialogue: '☕ Trà đá mát lạnh giải nhiệt sau bữa ăn giòn ngon!' },
       { id: 'bench_1', assetKey: 'prop_bench', x: 1100, y: 690, scale: 1.1, interactive: true, name: 'Ghế Nghỉ Vỉa Hè', dialogue: '🪑 Ghế ngồi nghỉ ngơi hóng mát cho bà con trong xóm.' },
@@ -202,7 +202,7 @@ const MAP_DETAILS: Record<string, Pick<LocationArea, 'mapProps' | 'expansionPoin
   school_gate: {
     mapProps: [
       { id: 'sign', assetKey: 'sign_school', x: 100, y: 720, scale: 1.0, interactive: true, name: 'Biển Cổng Trường Học', dialogue: '📍 Cổng Trường Chu Văn An: Thiên đường đồ ăn vặt tuổi học trò!' },
-      { id: 'tree_1', assetKey: 'prop_tree', x: 80, y: 590, scale: 1.4, interactive: true, name: 'Cây Xanh Sân Trường', dialogue: '🌳 Cây phượng vĩ râm mát gắn liền kỷ niệm tuổi học trò.' },
+      { id: 'tree_1', assetKey: 'prop_tree', x: 180, y: 590, scale: 1.4, interactive: true, name: 'Cây Xanh Sân Trường', dialogue: '🌳 Cây phượng vĩ râm mát gắn liền kỷ niệm tuổi học trò.' },
       { id: 'fence_1', assetKey: 'prop_fence', x: 320, y: 670, scale: 1.2, interactive: true, name: 'Hàng Rào Trường Học', dialogue: '🏫 Hàng rào xanh ngăn nắp bảo vệ an toàn cho học sinh.' },
       { id: 'fence_2', assetKey: 'prop_fence', x: 440, y: 670, scale: 1.2, interactive: true, name: 'Hàng Rào Trường Học', dialogue: '🏫 Góc hành lang rộn rã tiếng cười giờ tan học.' },
       { id: 'counter_1', assetKey: 'prop_counter', x: 1040, y: 680, scale: 1.2, interactive: true, name: 'Quầy Ăn Vặt Học Sinh', dialogue: '🌭 Quầy đồ ăn vặt đầy ắp bánh tráng, xiên que và nước ngọt!' },
@@ -236,7 +236,7 @@ const MAP_DETAILS: Record<string, Pick<LocationArea, 'mapProps' | 'expansionPoin
   central_park: {
     mapProps: [
       { id: 'sign', assetKey: 'sign_park', x: 100, y: 720, scale: 1.0, interactive: true, name: 'Biển Công Viên Trung Tâm', dialogue: '📍 Công Viên Cây Xanh: Lá phổi xanh râm mát giữa lòng đô thị!' },
-      { id: 'tree_1', assetKey: 'prop_tree', x: 80, y: 590, scale: 1.45, interactive: true, name: 'Cây Cổ Thụ Công Viên', dialogue: '🌳 Cổ thụ rợp bóng mát, chim chóc líu lo trên cành.' },
+      { id: 'tree_1', assetKey: 'prop_tree', x: 180, y: 590, scale: 1.45, interactive: true, name: 'Cây Cổ Thụ Công Viên', dialogue: '🌳 Cổ thụ rợp bóng mát, chim chóc líu lo trên cành.' },
       { id: 'fountain_1', assetKey: 'prop_fountain', x: 380, y: 660, scale: 1.3, interactive: true, name: 'Đài Phun Nước Công Viên', dialogue: '⛲ Làn nước mát trong lành xua tan cái nóng oi ả.' },
       { id: 'bench_1', assetKey: 'prop_bench', x: 540, y: 690, scale: 1.1, interactive: true, name: 'Ghế Đá Công Viên', dialogue: '🪑 Ghế đá râm mát cho cụ già ngồi tập dưỡng sinh và đọc báo.' },
       { id: 'planter_1', assetKey: 'prop_planter', x: 980, y: 690, scale: 1.2, interactive: true, name: 'Bồn Hoa Rực Rỡ', dialogue: '🌷 Hoa mười giờ và cúc vạn thọ khoe sắc rực rỡ.' },

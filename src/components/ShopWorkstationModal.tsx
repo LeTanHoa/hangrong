@@ -385,30 +385,30 @@ export const ShopWorkstationModal: React.FC = () => {
           </div>
 
           {/* ----------------- CỘT PHẢI (60%): ĐẤU TRƯỜNG THAO TÁC SỰ KIỆN ----------------- */}
-          <div className="col-span-7 p-3 sm:p-4 flex flex-col justify-between bg-slate-950 overflow-y-auto custom-scrollbar">
+          <div className="col-span-7 p-2 sm:p-2.5 flex flex-col min-h-0 bg-slate-950 overflow-hidden">
             {/* Case 1: Result Screen */}
             {completedResult ? (
-              <div className="h-full flex flex-col items-center justify-center p-4 text-center animate-fadeIn">
-                <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-3xl mb-2 animate-bounce">
+              <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-2 text-center animate-fadeIn">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-2xl mb-1.5 animate-bounce">
                   {completedResult.isPerfect ? '⭐' : '🎉'}
                 </div>
-                <h3 className="text-base font-black text-amber-300 mb-0.5">
+                <h3 className="text-sm font-black text-amber-300 mb-0.5">
                   {completedResult.isPerfect ? 'THAO TÁC HOÀN HẢO! (+40%)' : 'HOÀN THÀNH TỐT!'}
                 </h3>
-                <p className="text-xs text-slate-300 mb-3">
+                <p className="text-[11px] text-slate-300 mb-2">
                   Khách hàng vô cùng hài lòng với tay nghề của tiệm.
                 </p>
 
-                <div className="flex gap-4 mb-4">
-                  <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                    <span className="text-[10px] text-slate-400 block font-bold">Thù lao nhận</span>
-                    <span className="text-sm font-black text-emerald-400">
+                <div className="flex gap-3 mb-3">
+                  <div className="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                    <span className="text-[9px] text-slate-400 block font-bold">Thù lao nhận</span>
+                    <span className="text-xs font-black text-emerald-400">
                       +{formatVND(completedResult.payout)}
                     </span>
                   </div>
-                  <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                    <span className="text-[10px] text-slate-400 block font-bold">Kinh nghiệm</span>
-                    <span className="text-sm font-black text-amber-400">
+                  <div className="px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-center">
+                    <span className="text-[9px] text-slate-400 block font-bold">Kinh nghiệm</span>
+                    <span className="text-xs font-black text-amber-400">
                       +{completedResult.xp} XP
                     </span>
                   </div>
@@ -416,33 +416,33 @@ export const ShopWorkstationModal: React.FC = () => {
 
                 <button
                   onClick={() => setCompletedResult(null)}
-                  className="py-2 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs shadow active:scale-95 transition"
+                  className="py-2 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs shadow active:scale-95 transition"
                 >
                   Tiếp Tục Phục Vụ
                 </button>
               </div>
             ) : isServing && activeService ? (
               /* Case 2: Active Minigame In Progress */
-              <div className="h-full flex flex-col justify-between p-2 animate-fadeIn">
-                <div className="text-center">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase mb-1">
-                    <Zap className="w-3 h-3 animate-spin" /> Đang thao tác tay nghề...
+              <div className="flex-1 min-h-0 flex flex-col justify-between gap-1.5 animate-fadeIn">
+                <div className="text-center shrink-0">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[9px] font-black uppercase mb-0.5">
+                    <Zap className="w-2.5 h-2.5 animate-spin" /> Đang thao tác tay nghề...
                   </div>
-                  <h3 className="text-base font-black text-white flex items-center justify-center gap-1.5">
+                  <h3 className="text-xs sm:text-sm font-black text-white flex items-center justify-center gap-1.5">
                     <span>{activeService.icon}</span>
                     <span>{activeService.name}</span>
                   </h3>
                 </div>
 
                 {/* 3 Steps Indicator */}
-                <div className="grid grid-cols-3 gap-1.5 my-2">
+                <div className="grid grid-cols-3 gap-1 shrink-0">
                   {activeService.stepNames.map((step, idx) => {
                     const isCur = currentStepIndex === idx;
                     const isDone = currentStepIndex > idx;
                     return (
                       <div
                         key={idx}
-                        className={`p-1.5 rounded-xl border text-center transition ${
+                        className={`p-1 rounded-lg border text-center transition ${
                           isCur
                             ? 'border-orange-500 bg-orange-500/20 text-orange-200 font-bold shadow'
                             : isDone
@@ -450,21 +450,21 @@ export const ShopWorkstationModal: React.FC = () => {
                               : 'border-slate-800 bg-slate-900/60 text-slate-500'
                         }`}
                       >
-                        <div className="text-[9px] uppercase">Bước {idx + 1}</div>
-                        <div className="text-[10px] truncate">{step}</div>
+                        <div className="text-[8px] uppercase">Bước {idx + 1}</div>
+                        <div className="text-[9px] truncate">{step}</div>
                       </div>
                     );
                   })}
                 </div>
 
                 {/* Golden Sweet Spot Bar */}
-                <div className="my-2">
-                  <div className="flex justify-between text-[11px] font-black text-slate-400 mb-1">
+                <div className="my-0.5 shrink-0">
+                  <div className="flex justify-between text-[10px] font-black text-slate-400 mb-0.5">
                     <span>Tiến trình hoàn thiện</span>
                     <span className="text-amber-400 font-mono">{Math.round(progress)}%</span>
                   </div>
 
-                  <div className="relative h-7 bg-slate-900 rounded-full overflow-hidden border border-slate-700 shadow-inner">
+                  <div className="relative h-6 bg-slate-900 rounded-full overflow-hidden border border-slate-700 shadow-inner">
                     {/* Golden Zone */}
                     <div
                       className="absolute top-0 bottom-0 bg-amber-400/40 border-x-2 border-amber-300 animate-pulse flex items-center justify-center"
@@ -473,7 +473,7 @@ export const ShopWorkstationModal: React.FC = () => {
                         width: `${targetSweetSpot.max - targetSweetSpot.min}%`,
                       }}
                     >
-                      <span className="text-[9px] font-black text-amber-200 uppercase tracking-tighter">
+                      <span className="text-[8px] font-black text-amber-200 uppercase tracking-tighter">
                         VÙNG VÀNG (+40%)
                       </span>
                     </div>
@@ -489,66 +489,66 @@ export const ShopWorkstationModal: React.FC = () => {
                 {/* Big Action Button under Right Thumb */}
                 <button
                   onClick={handlePerfectClick}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 text-slate-950 font-black text-sm uppercase tracking-wide shadow-xl shadow-orange-950/60 active:scale-95 transition"
+                  className="w-full py-2 sm:py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wide shadow-lg shadow-orange-950/50 active:scale-95 transition shrink-0"
                 >
-                  🎯 HOÀN TẤT THAO TÁC (CHẠM ĐÚNG VÙNG VÀNG)
+                  🎯 HOÀN TẤT THAO TÁC (CHẠM VÙNG VÀNG)
                 </button>
               </div>
             ) : selectedService ? (
               /* Case 3: Master Service Detail & Start Action */
-              <div className="h-full flex flex-col justify-between p-2">
-                <div>
+              <div className="flex-1 min-h-0 flex flex-col justify-between gap-1.5">
+                <div className="overflow-y-auto custom-scrollbar pr-0.5 flex flex-col gap-1 min-h-0">
                   {/* Customer Banner if this service is requested */}
                   {store.shopCustomerRequests[shopId]?.serviceId === selectedService.id && (
-                    <div className="p-2.5 rounded-xl bg-amber-950/50 border border-amber-500/50 mb-3 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl animate-bounce">
+                    <div className="p-1.5 rounded-lg bg-amber-950/50 border border-amber-500/50 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-lg animate-bounce shrink-0">
                           {store.shopCustomerRequests[shopId].serviceIcon}
                         </span>
-                        <div>
-                          <div className="text-[10px] font-black text-amber-400 uppercase">
+                        <div className="min-w-0">
+                          <div className="text-[9px] font-black text-amber-400 uppercase">
                             Khách Hàng Đang Đợi
                           </div>
-                          <div className="text-xs font-bold text-white">
+                          <div className="text-[11px] font-bold text-white truncate">
                             &ldquo;{store.shopCustomerRequests[shopId].customerQuote}&rdquo;
                           </div>
                         </div>
                       </div>
-                      <span className="text-xs font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-lg">
+                      <span className="text-[10px] font-black text-amber-300 bg-amber-500/20 px-1.5 py-0.5 rounded shrink-0">
                         +{formatVND(store.shopCustomerRequests[shopId].payout)}
                       </span>
                     </div>
                   )}
 
                   {/* Service Presentation */}
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <span className="text-3xl p-2 rounded-2xl bg-slate-900 border border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl p-1.5 rounded-xl bg-slate-900 border border-slate-800 shrink-0">
                       {selectedService.icon}
                     </span>
-                    <div>
-                      <h3 className="text-sm sm:text-base font-black text-white">
+                    <div className="min-w-0">
+                      <h3 className="text-xs sm:text-sm font-black text-white truncate">
                         {selectedService.name}
                       </h3>
-                      <p className="text-[11px] text-slate-400">{selectedService.category}</p>
+                      <p className="text-[10px] text-slate-400">{selectedService.category}</p>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                  <p className="text-[11px] text-slate-300 leading-snug line-clamp-2">
                     {selectedService.description}
                   </p>
 
                   {/* 3 Steps Overview */}
-                  <div className="space-y-1 mb-3">
-                    <div className="text-[10px] font-black uppercase text-slate-400">
+                  <div>
+                    <div className="text-[9px] font-black uppercase text-slate-400 mb-0.5">
                       Quy trình thực hiện:
                     </div>
-                    <div className="grid grid-cols-3 gap-1.5">
+                    <div className="grid grid-cols-3 gap-1">
                       {selectedService.stepNames.map((st, i) => (
                         <div
                           key={i}
-                          className="p-1.5 rounded-lg bg-slate-900/80 border border-slate-800 text-[10px] text-slate-300 text-center"
+                          className="p-1 rounded-md bg-slate-900/80 border border-slate-800 text-[9px] text-slate-300 text-center"
                         >
-                          <span className="text-amber-400 font-bold block">Bước {i + 1}</span>
+                          <span className="text-amber-400 font-bold block text-[8px]">Bước {i + 1}</span>
                           <span className="truncate block">{st}</span>
                         </div>
                       ))}
@@ -556,40 +556,40 @@ export const ShopWorkstationModal: React.FC = () => {
                   </div>
 
                   {/* Rewards summary */}
-                  <div className="flex gap-2">
-                    <div className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-                      <span className="text-slate-400 block text-[9px] font-bold">Thù lao</span>
-                      <span className="font-black text-emerald-400">
+                  <div className="flex gap-1.5">
+                    <div className="flex-1 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-center">
+                      <span className="text-slate-400 block text-[8px] font-bold">Thù lao</span>
+                      <span className="font-black text-emerald-400 text-[10px]">
                         +{formatVND(selectedService.payout)}
                       </span>
                     </div>
-                    <div className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-                      <span className="text-slate-400 block text-[9px] font-bold">Thời gian</span>
-                      <span className="font-black text-white">
+                    <div className="flex-1 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-center">
+                      <span className="text-slate-400 block text-[8px] font-bold">Thời gian</span>
+                      <span className="font-black text-white text-[10px]">
                         {selectedService.durationSeconds}s
                       </span>
                     </div>
-                    <div className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-                      <span className="text-slate-400 block text-[9px] font-bold">Kinh nghiệm</span>
-                      <span className="font-black text-amber-400">
+                    <div className="flex-1 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-center">
+                      <span className="text-slate-400 block text-[8px] font-bold">Kinh nghiệm</span>
+                      <span className="font-black text-amber-400 text-[10px]">
                         +{selectedService.xpReward} XP
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Big Start Button under Right Thumb */}
+                {/* Compact Start Button pinned to bottom - Never Overflows */}
                 <button
                   onClick={() => handleStartService(selectedService)}
                   disabled={!isOwned}
-                  className={`w-full py-3 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wide shadow-xl active:scale-95 transition flex items-center justify-center gap-2 ${
+                  className={`w-full py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wide shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 shrink-0 ${
                     !isOwned
                       ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-slate-950 shadow-orange-950/50'
+                      : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-slate-950 shadow-orange-950/40 hover:from-orange-400 hover:to-yellow-400'
                   }`}
                 >
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>BẮT ĐẦU THAO TÁC NGHỀ NGHIỆP</span>
+                  <Play className="w-3.5 h-3.5 fill-current shrink-0" />
+                  <span className="truncate">BẮT ĐẦU THAO TÁC NGHỀ NGHIỆP</span>
                 </button>
               </div>
             ) : null}
