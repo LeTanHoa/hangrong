@@ -30,6 +30,8 @@ import {
   X,
   ChevronRight,
   UserPlus,
+  Music,
+  SkipForward,
 } from 'lucide-react';
 
 export const ExecutiveSidebar: React.FC = () => {
@@ -42,6 +44,14 @@ export const ExecutiveSidebar: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'SHOPS' | 'ORDERS'>('SHOPS');
+  const [currentTrackName, setCurrentTrackName] = useState(() => sounds.currentTrack.name);
+
+  const handleNextTrack = () => {
+    sounds.playClick();
+    const next = sounds.nextTrack();
+    setCurrentTrackName(next.name);
+    store.addToast('Đổi bài nhạc', `🎵 ${next.name}: ${next.desc}`, 'info');
+  };
 
   useEffect(() => {
     const checkSize = () => {
@@ -490,6 +500,22 @@ export const ExecutiveSidebar: React.FC = () => {
             >
               <ChefHat className="w-3 h-3" />
               <span>Nấu Ăn</span>
+            </button>
+          </div>
+
+          {/* Mini BGM Music Bar */}
+          <div className="flex items-center justify-between px-2 py-1 rounded-lg bg-slate-950/80 border border-slate-800 text-[9px] text-slate-300">
+            <div className="flex items-center gap-1 min-w-0">
+              <span className="text-amber-400">🎵</span>
+              <span className="truncate font-semibold text-white">{currentTrackName}</span>
+            </div>
+            <button
+              onClick={handleNextTrack}
+              className="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-0.5 ml-1 shrink-0 px-1 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 transition active:scale-95"
+              title="Chuyển sang bài nhạc khác"
+            >
+              <span>Đổi bài</span>
+              <SkipForward className="w-2.5 h-2.5" />
             </button>
           </div>
 
