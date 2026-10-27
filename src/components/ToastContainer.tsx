@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGameStore, ToastMessage } from '../stores/gameStore';
+import { useGameStore } from '../stores/gameStore';
 import { CheckCircle2, AlertCircle, Info, DollarSign, X } from 'lucide-react';
 
 export const ToastContainer: React.FC = () => {
@@ -8,16 +8,16 @@ export const ToastContainer: React.FC = () => {
   if (store.toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 left-3 right-3 sm:left-auto sm:right-6 z-[70] flex flex-col-reverse gap-2 sm:max-w-sm pointer-events-none select-none">
+    <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-[70] flex flex-col-reverse gap-1.5 max-w-[280px] sm:max-w-xs pointer-events-none select-none">
       {store.toasts.map((t) => {
-        let borderColor = 'border-slate-700';
-        let bgColor = 'bg-slate-900/95';
+        let borderColor = 'border-slate-700/60';
+        let bgColor = 'bg-slate-900/90';
         let Icon = Info;
         let iconColor = 'text-cyan-400';
 
         if (t.type === 'success') {
-          borderColor = 'border-emerald-500/60';
-          bgColor = 'bg-emerald-950/90';
+          borderColor = 'border-emerald-500/50';
+          bgColor = 'bg-slate-950/90';
           Icon = CheckCircle2;
           iconColor = 'text-emerald-400';
         } else if (t.type === 'error') {
@@ -26,8 +26,8 @@ export const ToastContainer: React.FC = () => {
           Icon = AlertCircle;
           iconColor = 'text-rose-400';
         } else if (t.type === 'money') {
-          borderColor = 'border-amber-500/60';
-          bgColor = 'bg-amber-950/90';
+          borderColor = 'border-amber-500/50';
+          bgColor = 'bg-slate-950/90';
           Icon = DollarSign;
           iconColor = 'text-amber-400';
         }
@@ -35,18 +35,25 @@ export const ToastContainer: React.FC = () => {
         return (
           <div
             key={t.id}
-            className={`pointer-events-auto flex items-start gap-2.5 p-3 rounded-xl border ${borderColor} ${bgColor} backdrop-blur-md shadow-xl text-white animate-fadeIn`}
+            className={`pointer-events-auto flex items-center gap-2 px-2.5 py-1.5 rounded-xl border ${borderColor} ${bgColor} backdrop-blur-md shadow-lg shadow-black/50 text-white animate-fadeIn`}
           >
-            <Icon className={`w-5 h-5 shrink-0 mt-0.5 ${iconColor}`} />
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="font-extrabold text-xs text-white leading-tight">{t.title}</span>
-              <span className="text-[11px] text-slate-300 mt-0.5 leading-snug">{t.message}</span>
+            <Icon className={`w-3.5 h-3.5 shrink-0 ${iconColor}`} />
+            <div className="flex flex-col flex-1 min-w-0 pr-1">
+              <span className="font-extrabold text-[11px] text-white leading-tight truncate">
+                {t.title}
+              </span>
+              {t.message && (
+                <span className="text-[10px] text-slate-300 leading-tight truncate">
+                  {t.message}
+                </span>
+              )}
             </div>
             <button
               onClick={() => store.removeToast(t.id)}
-              className="text-slate-400 hover:text-white p-0.5 transition"
+              className="text-slate-400 hover:text-white p-0.5 rounded transition shrink-0"
+              aria-label="Đóng"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3" />
             </button>
           </div>
         );
@@ -54,4 +61,3 @@ export const ToastContainer: React.FC = () => {
     </div>
   );
 };
-

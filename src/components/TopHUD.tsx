@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import { formatVND, getTimeOfDayLabel, getWeatherLabel, calculateLevelFromXP } from '../utils/formatters';
+import {
+  formatVND,
+  getTimeOfDayLabel,
+  getWeatherLabel,
+  calculateLevelFromXP,
+} from '../utils/formatters';
 import {
   Volume2,
   VolumeX,
@@ -9,17 +14,54 @@ import {
   FastForward,
   Bell,
   Bot,
+  Menu,
+  X,
+  Maximize,
+  Minimize,
+  ChefHat,
+  Sparkles,
 } from 'lucide-react';
 import { sounds } from '../audio/soundSystem';
 
 export const TopHUD: React.FC = () => {
   const store = useGameStore();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const timeInfo = getTimeOfDayLabel(store.timeOfDay);
   const weatherInfo = getWeatherLabel(store.weather);
-  const { currentXP, xpForNext, progress } = calculateLevelFromXP(store.xp);
+  const { progress } = calculateLevelFromXP(store.xp);
 
   // Check if any quest has uncollected reward
   const hasClaimableQuest = store.quests.some((q) => q.completed && !q.claimed);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   const toggleSound = () => {
     const nextState = !store.settings.soundEnabled;
@@ -27,11 +69,30 @@ export const TopHUD: React.FC = () => {
     sounds.playClick();
   };
 
-  const cycleSpeed = () => {
-    const current = store.settings.gameSpeed;
-    const next = current === 1 ? 1.5 : current === 1.5 ? 2 : 1;
-    store.updateSettings({ gameSpeed: next });
+  const cycleSpeed = (speed: number) => {
+    store.updateSettings({ gameSpeed: speed });
     sounds.playClick();
+  };
+
+  const toggleFullscreen = async () => {
+    sounds.playClick();
+    try {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        } else if ((document.documentElement as any).webkitRequestFullscreen) {
+          (document.documentElement as any).webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          (document as any).webkitExitFullscreen();
+        }
+      }
+    } catch (err) {
+      console.log('Fullscreen request error:', err);
+    }
   };
 
   return (
@@ -51,12 +112,12 @@ export const TopHUD: React.FC = () => {
           </div>
         </div>
 
-        {/* Level badge for mobile & full bar for desktop */}
+        {/* Level badge */}
         <div className="flex items-center gap-1 sm:gap-2 bg-slate-900/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-slate-700/60 shadow">
           <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-black text-[10px] sm:text-xs text-white shadow-inner">
             {store.level}
           </div>
-          <div className="hidden sm:flex flex-col w-16 md:w-20">
+          <div className="hidden sm:flex flex-col w-14 md:w-16">
             <div className="flex justify-between text-[9px] text-slate-300">
               <span>Cấp {store.level}</span>
               <span>{Math.round(progress)}%</span>
@@ -73,7 +134,9 @@ export const TopHUD: React.FC = () => {
         {/* Rating Stars */}
         <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-900/90 backdrop-blur-md px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full border border-slate-700/60 shadow text-amber-400">
           <Star className="w-3 h-3 fill-amber-400" />
-          <span className="font-bold text-white text-[11px] sm:text-xs">{store.reputationRating.toFixed(1)}</span>
+          <span className="font-bold text-white text-[11px] sm:text-xs">
+            {store.reputationRating.toFixed(1)}
+          </span>
         </div>
       </div>
 
@@ -89,13 +152,16 @@ export const TopHUD: React.FC = () => {
           <span className="hidden md:inline text-xs">{timeInfo.label.split(' ')[0]}</span>
         </div>
 
-        <div className="hidden sm:flex items-center gap-1 text-sky-300 border-l border-slate-700 pl-1.5" title={weatherInfo.effect}>
+        <div
+          className="hidden sm:flex items-center gap-1 text-sky-300 border-l border-slate-700 pl-1.5"
+          title={weatherInfo.effect}
+        >
           <span>{weatherInfo.icon}</span>
           <span className="hidden lg:inline text-xs">{weatherInfo.label}</span>
         </div>
 
         {/* Day timer progress bar */}
-        <div className="w-8 sm:w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden ml-0.5">
+        <div className="w-7 sm:w-10 h-1.5 bg-slate-700 rounded-full overflow-hidden ml-0.5">
           <div
             className="bg-amber-400 h-full rounded-full transition-all duration-200"
             style={{ width: `${store.dayProgress}%` }}
@@ -103,73 +169,183 @@ export const TopHUD: React.FC = () => {
         </div>
       </div>
 
-      {/* RIGHT: Controls & Phone launcher */}
-      <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto shrink-0">
-        {/* Auto mode button */}
+      {/* RIGHT: Compact Action Group & Single Unified Menu Button */}
+      <div className="relative flex items-center gap-1 pointer-events-auto shrink-0" ref={menuRef}>
+        {/* Fullscreen Button for instant full immersion */}
         <button
-          onClick={store.toggleAutoMode}
-          aria-pressed={store.autoMode}
-          className={`flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border font-extrabold text-xs shadow transition active:scale-95 ${
-            store.autoMode
-              ? 'bg-emerald-500 text-slate-950 border-emerald-200 shadow-emerald-950/40'
-              : 'bg-slate-900/90 text-slate-300 border-slate-700 hover:bg-slate-800'
-          }`}
-          title={store.autoMode ? 'Tắt tự nấu và giao món' : 'Bật tự nấu và giao món'}
+          onClick={toggleFullscreen}
+          className="p-1.5 sm:p-2 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white rounded-full border border-slate-700 transition active:scale-95 shadow"
+          title={isFullscreen ? 'Thoát toàn màn hình' : 'Bật toàn màn hình'}
+          aria-label="Toàn màn hình"
         >
-          <Bot className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">{store.autoMode ? 'Tự động' : 'Thủ công'}</span>
+          {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
         </button>
 
-        {/* Call Customers Bell button */}
+        {/* Unified Menu Icon Button */}
         <button
           onClick={() => {
-            store.spawnCustomerOrder();
-            sounds.playBell();
+            sounds.playClick();
+            setIsMenuOpen((prev) => !prev);
           }}
-          className="flex items-center gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-slate-950 font-extrabold p-1.5 sm:px-2.5 sm:py-1.5 rounded-full text-xs shadow active:scale-95 transition"
-          title="Rung chuông mời khách"
+          className={`relative flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-full font-bold shadow-lg transition active:scale-95 border ${
+            isMenuOpen
+              ? 'bg-amber-500 text-slate-950 border-amber-300'
+              : 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 border-slate-700'
+          }`}
+          title="Mở menu tính năng"
+          aria-label="Menu trò chơi"
         >
-          <Bell className="w-3.5 h-3.5 animate-bounce" />
-          <span className="hidden md:inline">Mời Khách</span>
-        </button>
-
-        {/* Speed button */}
-        <button
-          onClick={cycleSpeed}
-          className="flex items-center gap-0.5 bg-slate-900/90 hover:bg-slate-800 text-slate-200 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full border border-slate-700 text-xs transition active:scale-95 shadow"
-          title="Tốc độ game"
-        >
-          <FastForward className="w-3 h-3 text-amber-400" />
-          <span className="font-bold text-[10px] sm:text-[11px]">{store.settings.gameSpeed}x</span>
-        </button>
-
-        {/* Sound toggle */}
-        <button
-          onClick={toggleSound}
-          className="p-1.5 bg-slate-900/90 hover:bg-slate-800 text-slate-200 rounded-full border border-slate-700 transition active:scale-95 shadow"
-          title="Bật/Tắt âm thanh"
-        >
-          {store.settings.soundEnabled ? (
-            <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-          ) : (
-            <VolumeX className="w-3.5 h-3.5 text-rose-400" />
-          )}
-        </button>
-
-        {/* Smartphone Modal Button */}
-        <button
-          onClick={() => store.openModal('SMARTPHONE')}
-          className="relative flex items-center gap-1 bg-gradient-to-r from-orange-600 to-rose-600 hover:from-orange-500 hover:to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full font-bold shadow-lg shadow-orange-950/50 border border-orange-300/40 active:scale-95 transition"
-          title="Mở điện thoại thông minh"
-        >
-          <Smartphone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          <span className="hidden sm:inline text-xs sm:text-sm">Điện Thoại</span>
+          {isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          <span className="hidden sm:inline text-xs">Menu</span>
           {hasClaimableQuest && (
             <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white animate-pulse" />
           )}
         </button>
+
+        {/* Dropdown Menu Popover */}
+        {isMenuOpen && (
+          <div className="absolute top-11 right-0 w-64 bg-slate-950/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl p-2 flex flex-col gap-1.5 animate-fadeIn text-white z-50">
+            {/* 1. Smartphone launcher */}
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setIsMenuOpen(false);
+                store.openModal('SMARTPHONE');
+              }}
+              className="flex items-center justify-between p-2 rounded-xl bg-gradient-to-r from-orange-600/90 to-rose-600/90 hover:from-orange-500 hover:to-rose-500 text-white font-extrabold text-xs shadow transition active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-orange-200" />
+                <span>Điện Thoại & Quản Lý</span>
+              </div>
+              {hasClaimableQuest && (
+                <span className="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full animate-bounce">
+                  Thưởng!
+                </span>
+              )}
+            </button>
+
+            {/* 2. Cooking station */}
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setIsMenuOpen(false);
+                store.openCookingStation();
+              }}
+              className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-amber-300 font-extrabold text-xs transition active:scale-95"
+            >
+              <ChefHat className="w-4 h-4 text-amber-400" />
+              <span>Trạm Bếp Nấu Ăn</span>
+            </button>
+
+            {/* 3. Call Customers Bell */}
+            <button
+              onClick={() => {
+                sounds.playBell();
+                store.spawnCustomerOrder();
+              }}
+              className="flex items-center justify-between p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs transition active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                <Bell className="w-4 h-4 text-amber-400" />
+                <span>Rung Chuông Mời Khách</span>
+              </div>
+              <span className="text-[10px] text-amber-400 font-bold">+1 Khách</span>
+            </button>
+
+            {/* 4. Auto mode toggle */}
+            <button
+              onClick={() => {
+                sounds.playClick();
+                store.toggleAutoMode();
+              }}
+              className="flex items-center justify-between p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs transition active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                <Bot className={`w-4 h-4 ${store.autoMode ? 'text-emerald-400' : 'text-slate-400'}`} />
+                <span>Tự Động Nấu & Bán</span>
+              </div>
+              <span
+                className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  store.autoMode
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                    : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                {store.autoMode ? 'BẬT' : 'TẮT'}
+              </span>
+            </button>
+
+            {/* 5. Speed Selector */}
+            <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+              <div className="flex items-center gap-1.5 text-slate-300 font-bold">
+                <FastForward className="w-4 h-4 text-amber-400" />
+                <span>Tốc Độ</span>
+              </div>
+              <div className="flex gap-1">
+                {[1, 1.5, 2].map((spd) => (
+                  <button
+                    key={spd}
+                    onClick={() => cycleSpeed(spd)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-black transition active:scale-95 ${
+                      store.settings.gameSpeed === spd
+                        ? 'bg-amber-500 text-slate-950 font-black'
+                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {spd}x
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 6. Sound toggle */}
+            <button
+              onClick={toggleSound}
+              className="flex items-center justify-between p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs transition active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                {store.settings.soundEnabled ? (
+                  <Volume2 className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <VolumeX className="w-4 h-4 text-rose-400" />
+                )}
+                <span>Âm Thanh & Nhạc</span>
+              </div>
+              <span
+                className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  store.settings.soundEnabled
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                {store.settings.soundEnabled ? 'BẬT' : 'TẮT'}
+              </span>
+            </button>
+
+            {/* 7. Fullscreen Toggle */}
+            <button
+              onClick={() => {
+                toggleFullscreen();
+                setIsMenuOpen(false);
+              }}
+              className="flex items-center justify-between p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs transition active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                {isFullscreen ? (
+                  <Minimize className="w-4 h-4 text-cyan-400" />
+                ) : (
+                  <Maximize className="w-4 h-4 text-cyan-400" />
+                )}
+                <span>Toàn Màn Hình</span>
+              </div>
+              <span className="text-[10px] text-cyan-400 font-bold">
+                {isFullscreen ? 'Thu nhỏ' : 'Phóng to'}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
 };
-

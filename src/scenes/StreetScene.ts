@@ -331,12 +331,37 @@ export class StreetScene extends Phaser.Scene {
       };
     }
 
-    // Click / Tap to move on sidewalk pavement
+    // Click / Tap to move on sidewalk pavement with visual ripple feedback
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[] = []) => {
       if (useGameStore.getState().activeModal) return;
       if (currentlyOver.length > 0) return;
       const zone = loc.walkZone;
-      if (pointer.y >= zone.minY - 30 && pointer.y <= zone.maxY + 30) {
+      if (pointer.y >= 450 && pointer.y <= 1020) {
+        const targetX = Phaser.Math.Clamp(pointer.x, zone.minX, zone.maxX);
+        const targetY = Phaser.Math.Clamp(pointer.y, zone.minY, zone.maxY);
+        this.playerTargetX = targetX;
+        this.playerTargetY = targetY;
+
+        // Visual tap ripple feedback on sidewalk
+        const ripple = this.add.circle(targetX, targetY, 8, 0xfbbf24, 0.85);
+        ripple.setDepth(targetY - 1);
+        this.tweens.add({
+          targets: ripple,
+          radius: 30,
+          alpha: 0,
+          duration: 380,
+          ease: 'Quad.easeOut',
+          onComplete: () => ripple.destroy(),
+        });
+      }
+    });
+
+    // Tap and drag to walk along sidewalk
+    this.input.on('pointermove', (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[] = []) => {
+      if (!pointer.isDown || useGameStore.getState().activeModal) return;
+      if (currentlyOver.length > 0) return;
+      if (pointer.y >= 450 && pointer.y <= 1020) {
+        const zone = loc.walkZone;
         this.playerTargetX = Phaser.Math.Clamp(pointer.x, zone.minX, zone.maxX);
         this.playerTargetY = Phaser.Math.Clamp(pointer.y, zone.minY, zone.maxY);
       }
