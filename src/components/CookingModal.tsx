@@ -114,7 +114,7 @@ export const CookingModal: React.FC = () => {
       onClick={() => store.closeModal()}
     >
       <div
-        className="relative w-full max-w-lg max-h-[96dvh] sm:max-h-[90vh] bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl shadow-black overflow-hidden flex flex-col pointer-events-auto"
+        className="relative w-full max-w-md sm:max-w-lg max-h-[86vh] sm:max-h-[82vh] bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl shadow-black overflow-hidden flex flex-col pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
       >

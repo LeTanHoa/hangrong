@@ -191,11 +191,11 @@ export const ShopWorkstationModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-3 bg-black/80 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/75 backdrop-blur-sm animate-fade-in"
       onClick={() => store.closeModal()}
     >
       <div
-        className="relative w-full max-w-2xl h-full sm:h-auto max-h-[96dvh] sm:max-h-[92vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg sm:max-w-xl max-h-[86vh] sm:max-h-[82vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
