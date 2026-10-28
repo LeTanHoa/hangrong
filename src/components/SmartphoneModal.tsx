@@ -28,6 +28,7 @@ import {
   RefreshCw,
   Sparkles,
   Store,
+  Search,
 } from 'lucide-react';
 import { sounds } from '../audio/soundSystem';
 
@@ -36,8 +37,18 @@ export const SmartphoneModal: React.FC = () => {
   const currentApp = store.smartphoneApp || 'MARKET';
 
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [marketSearchQuery, setMarketSearchQuery] = useState<string>('');
   const [purchaseQtys, setPurchaseQtys] = useState<Record<string, number>>({});
   const [staffFilter, setStaffFilter] = useState<'ALL' | 'HIRED' | 'AVAILABLE'>('ALL');
+
+  const removeVietnameseTones = (str: string) => {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .toLowerCase();
+  };
 
   const setQty = (id: string, delta: number) => {
     setPurchaseQtys((prev) => {
@@ -212,112 +223,166 @@ export const SmartphoneModal: React.FC = () => {
           {/* CỘT PHẢI (70% - 74%): BÀN LÀM VIỆC ỨNG DỤNG CHI TIẾT */}
           <div className="col-span-8 sm:col-span-9 p-2.5 sm:p-3 overflow-y-auto custom-scrollbar bg-slate-950 text-slate-200">
           {/* ================= 1. MARKET (CHỢ ĐẦU MỐI) ================= */}
-          {currentApp === 'MARKET' && (
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900 p-3 rounded-xl border border-slate-800">
-                <div>
-                  <h3 className="font-extrabold text-sm text-white flex items-center gap-1.5">
-                    <ShoppingCart className="w-4 h-4 text-emerald-400" />
-                    Chợ Đầu Mối Nguyên Liệu Tươi Sạch
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Nhập hàng tận gốc từ các cô chú tiểu thương chợ truyền thống.
-                  </p>
-                </div>
+          {currentApp === 'MARKET' && (() => {
+            const filteredIngredients = INITIAL_INGREDIENTS.filter((item) => {
+              if (!marketSearchQuery.trim()) return true;
+              const q = removeVietnameseTones(marketSearchQuery.trim());
+              const nameNorm = removeVietnameseTones(item.name);
+              const supplierNorm = removeVietnameseTones(item.supplierName || '');
+              const catNorm = removeVietnameseTones(item.category || '');
+              return nameNorm.includes(q) || supplierNorm.includes(q) || catNorm.includes(q);
+            });
 
-                {/* Storage Capacity Gauge */}
-                <div className="flex flex-col w-44 bg-slate-950 p-2 rounded-lg border border-slate-800">
-                  <div className="flex justify-between text-[11px] font-bold">
-                    <span>Sức chứa kho:</span>
-                    <span
-                      className={
-                        totalItems >= maxStorage ? 'text-rose-400' : 'text-emerald-400'
-                      }
-                    >
-                      {totalItems}/{maxStorage}
-                    </span>
+            return (
+              <div className="flex flex-col gap-3 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                  <div>
+                    <h3 className="font-extrabold text-sm text-white flex items-center gap-1.5">
+                      <ShoppingCart className="w-4 h-4 text-emerald-400" />
+                      Chợ Đầu Mối Nguyên Liệu Tươi Sạch
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Nhập hàng tận gốc từ các cô chú tiểu thương chợ truyền thống.
+                    </p>
                   </div>
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        totalItems >= maxStorage ? 'bg-rose-500' : 'bg-emerald-500'
-                      }`}
-                      style={{ width: `${Math.min(100, (totalItems / maxStorage) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
 
-              {/* Items Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                {INITIAL_INGREDIENTS.map((item) => {
-                  const currentStock = store.inventory[item.id] || 0;
-                  const qty = getQty(item.id);
-                  const totalCost = item.costPerUnit * qty;
-                  const canAfford = store.money >= totalCost;
-                  const hasSpace = totalItems + qty <= maxStorage;
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-slate-700 transition"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-3xl shrink-0">{item.icon}</span>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-xs sm:text-sm text-white">
-                            {item.name}
-                          </span>
-                          <span className="text-[11px] text-slate-400">
-                            {formatVND(item.costPerUnit)} / {item.unit} • {item.supplierName}
-                          </span>
-                          <span className="text-[11px] text-amber-400 font-semibold mt-0.5">
-                            Đang có: {currentStock} {item.unit}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Quantity Controls & Buy */}
-                      <div className="flex flex-col items-end gap-1.5 shrink-0">
-                        <div className="flex items-center gap-1 bg-slate-950 px-1 py-0.5 rounded-lg border border-slate-800">
-                          <button
-                            onClick={() => setQty(item.id, -1)}
-                            className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="text-xs font-bold text-white px-1.5">{qty}</span>
-                          <button
-                            onClick={() => setQty(item.id, 1)}
-                            className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            const ok = store.buyIngredient(item.id, qty);
-                            if (ok && store.tutorialStep === 1) {
-                              store.advanceTutorial();
-                            }
-                          }}
-                          disabled={!canAfford || !hasSpace}
-                          className={`px-3 py-1.5 rounded-lg font-bold text-xs transition active:scale-95 shadow ${
-                            canAfford && hasSpace
-                              ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                              : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                          }`}
-                        >
-                          Mua {formatVND(totalCost)}
-                        </button>
-                      </div>
+                  {/* Storage Capacity Gauge */}
+                  <div className="flex flex-col w-44 bg-slate-950 p-2 rounded-lg border border-slate-800">
+                    <div className="flex justify-between text-[11px] font-bold">
+                      <span>Sức chứa kho:</span>
+                      <span
+                        className={
+                          totalItems >= maxStorage ? 'text-rose-400' : 'text-emerald-400'
+                        }
+                      >
+                        {totalItems}/{maxStorage}
+                      </span>
                     </div>
-                  );
-                })}
+                    <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          totalItems >= maxStorage ? 'bg-rose-500' : 'bg-emerald-500'
+                        }`}
+                        style={{ width: `${Math.min(100, (totalItems / maxStorage) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Instant Search Bar */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="relative flex-1 min-w-0">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={marketSearchQuery}
+                      onChange={(e) => setMarketSearchQuery(e.target.value)}
+                      placeholder="Tìm nguyên liệu (thịt, bánh mì, trứng, rau, bơ...)..."
+                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-9 pr-8 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 transition"
+                    />
+                    {marketSearchQuery && (
+                      <button
+                        onClick={() => setMarketSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-white rounded-md transition"
+                        title="Xóa tìm kiếm"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="text-[11px] font-bold text-slate-400 px-2.5 py-2 bg-slate-900 rounded-xl border border-slate-800 shrink-0">
+                    Tìm thấy <strong className="text-emerald-400">{filteredIngredients.length}</strong>/{INITIAL_INGREDIENTS.length} món
+                  </div>
+                </div>
+
+                {/* Empty Search Result */}
+                {filteredIngredients.length === 0 ? (
+                  <div className="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800 flex flex-col items-center justify-center gap-2">
+                    <span className="text-3xl">🔍</span>
+                    <div className="text-xs font-bold text-slate-300">
+                      Không tìm thấy nguyên liệu nào khớp với &ldquo;{marketSearchQuery}&rdquo;
+                    </div>
+                    <button
+                      onClick={() => setMarketSearchQuery('')}
+                      className="mt-1 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-emerald-300 rounded-lg transition"
+                    >
+                      Xóa bộ lọc tìm kiếm
+                    </button>
+                  </div>
+                ) : (
+                  /* Items Grid */
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 min-w-0">
+                    {filteredIngredients.map((item) => {
+                      const currentStock = store.inventory[item.id] || 0;
+                      const qty = getQty(item.id);
+                      const totalCost = item.costPerUnit * qty;
+                      const canAfford = store.money >= totalCost;
+                      const hasSpace = totalItems + qty <= maxStorage;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between p-3 bg-slate-900 rounded-xl border border-slate-800 hover:border-slate-700 transition min-w-0"
+                        >
+                          <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                            <span className="text-3xl shrink-0">{item.icon}</span>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <span className="font-bold text-xs sm:text-sm text-white truncate">
+                                {item.name}
+                              </span>
+                              <span className="text-[11px] text-slate-400 truncate">
+                                {formatVND(item.costPerUnit)} / {item.unit} • {item.supplierName}
+                              </span>
+                              <span className="text-[11px] text-amber-400 font-semibold mt-0.5 truncate">
+                                Đang có: {currentStock} {item.unit}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Quantity Controls & Buy */}
+                          <div className="flex flex-col items-end gap-1.5 shrink-0">
+                            <div className="flex items-center gap-1 bg-slate-950 px-1 py-0.5 rounded-lg border border-slate-800">
+                              <button
+                                onClick={() => setQty(item.id, -1)}
+                                className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="text-xs font-bold text-white px-1.5">{qty}</span>
+                              <button
+                                onClick={() => setQty(item.id, 1)}
+                                className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                const ok = store.buyIngredient(item.id, qty);
+                                if (ok && store.tutorialStep === 1) {
+                                  store.advanceTutorial();
+                                }
+                              }}
+                              disabled={!canAfford || !hasSpace}
+                              className={`px-3 py-1.5 rounded-lg font-bold text-xs transition active:scale-95 shadow ${
+                                canAfford && hasSpace
+                                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                                  : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                              }`}
+                            >
+                              Mua {formatVND(totalCost)}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ================= 2. RECIPES (SỔ MÓN ĂN) ================= */}
           {currentApp === 'RECIPES' && (
