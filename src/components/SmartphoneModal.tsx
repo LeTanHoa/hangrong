@@ -840,9 +840,9 @@ export const SmartphoneModal: React.FC = () => {
                           <div className="flex flex-col flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="font-bold text-sm text-white">{member.name}</span>
-                              <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-semibold">
+                              {/* <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-semibold">
                                 {member.title}
-                              </span>
+                              </span> */}
                             </div>
                             <p className="text-xs text-slate-400 mt-1">{member.description}</p>
                             <span className="text-[11px] text-amber-300 font-semibold mt-1">
