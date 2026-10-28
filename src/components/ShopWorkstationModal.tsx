@@ -212,7 +212,11 @@ export const ShopWorkstationModal: React.FC = () => {
           className={`px-3 sm:px-4 py-2 bg-gradient-to-r ${shopSpec.bgGradient} border-b border-slate-700/80 flex items-center justify-between shrink-0`}
         >
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xl shrink-0">{shopSpec.icon}</span>
+            {shopId.startsWith('coop_') ? (
+              <img src="/assets/logos/coopmart_badge.png" alt="Co.opmart" className="w-8 h-8 object-contain rounded bg-white p-0.5 shrink-0 shadow" />
+            ) : (
+              <span className="text-xl shrink-0">{shopSpec.icon}</span>
+            )}
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <h2 className="text-xs sm:text-sm font-black text-white tracking-wide truncate">

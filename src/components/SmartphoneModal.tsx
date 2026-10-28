@@ -638,10 +638,23 @@ export const SmartphoneModal: React.FC = () => {
                   return (
                     <article key={shop.id} className={`overflow-hidden rounded-2xl border ${level > 0 ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-slate-800 bg-slate-900'}`}>
                       <div className="flex items-start gap-3 p-3.5">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 text-2xl ${level > 0 ? 'bg-emerald-950/70' : 'bg-slate-950/70'}`}>{shop.icon}</div>
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 text-2xl ${level > 0 ? 'bg-emerald-950/70' : 'bg-slate-950/70'}`}>
+                          {shop.id === 'coop_hypermarket' ? (
+                            <img src="/assets/logos/coopmart_badge.png" alt="Co.opmart" className="w-10 h-10 object-contain rounded-lg p-0.5 bg-white" />
+                          ) : (
+                            shop.icon
+                          )}
+                        </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between gap-2">
-                            <h4 className="text-sm font-extrabold text-white">{shop.name}</h4>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <h4 className="text-sm font-extrabold text-white truncate">{shop.name}</h4>
+                              {shop.id.startsWith('coop_') && (
+                                <span className="bg-blue-600/30 text-blue-300 border border-blue-400/40 text-[9px] font-black px-1.5 py-0.5 rounded shrink-0">
+                                  CO.OPMART
+                                </span>
+                              )}
+                            </div>
                             <span className={`shrink-0 rounded-full px-2 py-1 text-[9px] font-extrabold uppercase ${level > 0 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-slate-800 text-slate-400'}`}>
                               {level > 0 ? `Cấp ${level}/${MAX_SHOP_LEVEL}` : `Phố ${shop.streetScreen}`}
                             </span>
@@ -801,7 +814,7 @@ export const SmartphoneModal: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 min-w-0">
                   {filteredStaff.map((member) => {
                     const isHired = store.staff[member.id];
                     const canHire =
@@ -812,13 +825,13 @@ export const SmartphoneModal: React.FC = () => {
                     return (
                       <div
                         key={member.id}
-                        className={`p-3.5 rounded-xl border flex flex-col justify-between gap-3 ${
+                        className={`p-3 sm:p-3.5 rounded-xl border flex flex-col justify-between gap-3 min-w-0 overflow-hidden ${
                           isHired
                             ? 'bg-purple-950/40 border-purple-500/50'
                             : 'bg-slate-900 border-slate-800'
                         }`}
                       >
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-3 min-w-0">
                           <img
                             src={`/assets/characters/${member.id}.png`}
                             alt={member.name}
@@ -839,28 +852,28 @@ export const SmartphoneModal: React.FC = () => {
                         </div>
 
                         {isHired ? (
-                          <div className="space-y-2 pt-2 border-t border-purple-500/20">
-                            <div className="flex items-center justify-between text-xs">
+                          <div className="space-y-2 pt-2 border-t border-purple-500/20 min-w-0">
+                            <div className="flex items-center justify-between text-xs min-w-0">
                               <span className="text-purple-300 font-extrabold flex items-center gap-1">
-                                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                                 Điều phối nhân sự:
                               </span>
                               {assignedShop ? (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
                                   Đang trực tiệm
                                 </span>
                               ) : (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
                                   Chờ phân công
                                 </span>
                               )}
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 min-w-0">
                               <select
                                 value={assignedShopId || ''}
                                 onChange={(e) => store.assignStaffToShop(member.id, e.target.value || null)}
-                                className="flex-1 bg-slate-950/80 border border-purple-500/40 rounded-xl px-2.5 py-2 text-xs text-white font-medium focus:outline-none focus:ring-1 focus:ring-purple-400"
+                                className="min-w-0 w-0 flex-1 bg-slate-950/90 border border-purple-500/40 rounded-xl px-2.5 py-1.5 text-xs text-white font-medium focus:outline-none focus:ring-1 focus:ring-purple-400 truncate"
                               >
                                 <option value="">💤 Chưa phân công (Chờ việc)</option>
                                 {ownedShops.map((shop) => (
@@ -872,7 +885,7 @@ export const SmartphoneModal: React.FC = () => {
                               {assignedShopId && (
                                 <button
                                   onClick={() => store.unassignStaff(member.id)}
-                                  className="px-2.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition shrink-0"
+                                  className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition shrink-0 whitespace-nowrap active:scale-95 border border-slate-700/60"
                                   title="Rút về chờ việc"
                                 >
                                   Thu hồi
@@ -881,8 +894,8 @@ export const SmartphoneModal: React.FC = () => {
                             </div>
 
                             {assignedShop ? (
-                              <p className="text-[11px] text-emerald-300/90 font-medium flex items-center gap-1 bg-emerald-950/30 px-2.5 py-1.5 rounded-lg border border-emerald-500/20">
-                                <span>⚡ Tự động phục vụ khách tại</span>
+                              <p className="text-[11px] text-emerald-300/90 font-medium flex items-center gap-1 bg-emerald-950/30 px-2.5 py-1.5 rounded-lg border border-emerald-500/20 min-w-0">
+                                <span className="shrink-0">⚡ Tự động phục vụ khách tại</span>
                                 <strong className="text-white truncate">{assignedShop.name}</strong>
                               </p>
                             ) : (

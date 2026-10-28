@@ -2,6 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
+const coopmartBadgePath = path.resolve('public/assets/logos/coopmart_badge.png');
+const coopmartBadgeBase64 = fs.existsSync(coopmartBadgePath)
+  ? `data:image/png;base64,${fs.readFileSync(coopmartBadgePath).toString('base64')}`
+  : '';
+
 const width = 800;
 const height = 520;
 
@@ -936,21 +941,23 @@ const screen9 = `
       <line x1="${gx}" y1="24" x2="${gx}" y2="84" stroke="#7dd3fc" stroke-width="1.2" opacity="0.6"/>
     `).join('')}
 
-    <!-- Giant Iconic CO.OPMART ĐÀ NẴNG Main Signboard -->
+    <!-- Giant Iconic CO.OPMART ĐÀ NẴNG Main Signboard with Official Brand Logo -->
     <g filter="url(#signShadow)">
       <!-- Sign Board Outer Frame -->
       <rect x="80" y="20" width="640" height="54" rx="8" fill="#0369a1" stroke="#e11d48" stroke-width="3"/>
       <rect x="85" y="24" width="630" height="46" rx="6" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
 
-      <!-- Heart / Clover Co.op Icon badge -->
-      <circle cx="120" cy="47" r="16" fill="#ffffff"/>
-      <circle cx="114" cy="44" r="6" fill="#e11d48"/>
-      <circle cx="126" cy="44" r="6" fill="#0284c7"/>
-      <circle cx="120" cy="52" r="6" fill="#16a34a"/>
+      <!-- Official Co.opmart Logo Badge (Left) -->
+      <rect x="94" y="26" width="58" height="42" rx="6" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+      <image href="${coopmartBadgeBase64}" x="96" y="27" width="54" height="40" preserveAspectRatio="xMidYMid meet"/>
+
+      <!-- Official Co.opmart Logo Badge (Right) -->
+      <rect x="648" y="26" width="58" height="42" rx="6" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+      <image href="${coopmartBadgeBase64}" x="650" y="27" width="54" height="40" preserveAspectRatio="xMidYMid meet"/>
       
       <!-- Typography -->
-      <text x="410" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">SIÊU THỊ CO.OPMART ĐÀ NẴNG</text>
-      <text x="410" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="800" fill="#fef08a" text-anchor="middle" letter-spacing="1">TRUNG TÂM THƯƠNG MẠI • BẠN CỦA MỌI NHÀ • PHỤC VỤ TẬN TÂM</text>
+      <text x="400" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.2">SIÊU THỊ CO.OPMART ĐÀ NẴNG</text>
+      <text x="400" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="800" fill="#fef08a" text-anchor="middle" letter-spacing="1">TRUNG TÂM THƯƠNG MẠI • BẠN CỦA MỌI NHÀ • PHỤC VỤ TẬN TÂM</text>
     </g>
 
     <!-- Grand Awning &amp; Canopy with Steel Truss (y: 76..106) -->
@@ -1012,9 +1019,13 @@ const screen9 = `
       <circle cx="510" cy="125" r="4" fill="#22c55e"/>
       <text x="510" y="146" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="900" fill="#ffffff" text-anchor="middle">QUẦY 4</text>
 
-      <!-- Glass Sliding Doors Frame -->
-      <rect x="375" y="120" width="50" height="88" fill="#38bdf8" opacity="0.35" stroke="#0284c7" stroke-width="2"/>
-      <line x1="400" y1="120" x2="400" y2="208" stroke="#ffffff" stroke-width="2.5"/>
+      <!-- Glass Sliding Doors Frame with Co.opmart Official Logo Overhead -->
+      <g filter="url(#signShadow)">
+        <rect x="362" y="112" width="76" height="44" rx="4" fill="#ffffff" stroke="#0284c7" stroke-width="1.8"/>
+        <image href="${coopmartBadgeBase64}" x="364" y="113" width="72" height="42" preserveAspectRatio="xMidYMid meet"/>
+      </g>
+      <rect x="375" y="156" width="50" height="52" fill="#38bdf8" opacity="0.35" stroke="#0284c7" stroke-width="2"/>
+      <line x1="400" y1="156" x2="400" y2="208" stroke="#ffffff" stroke-width="2.5"/>
 
       <!-- Shopping Carts Line (In front of entrance) -->
       ${[270, 295, 320, 440, 465, 490].map(cx => `
@@ -1098,14 +1109,12 @@ async function run() {
     <rect x="22" y="80" width="440" height="340" rx="8" fill="#f8fafc" stroke="#0284c7" stroke-width="4"/>
     <rect x="22" y="80" width="440" height="25" fill="#0284c7"/>
     <rect x="22" y="105" width="440" height="8" fill="#e11d48"/>
-    <!-- Big Logo -->
-    <rect x="42" y="125" width="400" height="80" rx="8" fill="#0369a1" stroke="#e11d48" stroke-width="3"/>
-    <circle cx="90" cy="165" r="22" fill="#ffffff"/>
-    <circle cx="82" cy="160" r="8" fill="#e11d48"/>
-    <circle cx="98" cy="160" r="8" fill="#0284c7"/>
-    <circle cx="90" cy="172" r="8" fill="#16a34a"/>
-    <text x="260" y="160" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle">CO.OPMART</text>
-    <text x="260" y="185" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#fde047" text-anchor="middle">ĐÀ NẴNG</text>
+    <!-- Big Official Co.opmart Logo -->
+    <rect x="42" y="125" width="400" height="86" rx="8" fill="#0369a1" stroke="#e11d48" stroke-width="3"/>
+    <rect x="52" y="130" width="100" height="76" rx="6" fill="#ffffff" stroke="#bae6fd" stroke-width="2"/>
+    <image href="${coopmartBadgeBase64}" x="54" y="132" width="96" height="72" preserveAspectRatio="xMidYMid meet"/>
+    <text x="280" y="160" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="900" fill="#ffffff" text-anchor="middle">CO.OPMART ĐÀ NẴNG</text>
+    <text x="280" y="185" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#fde047" text-anchor="middle">BẠN CỦA MỌI NHÀ</text>
     <!-- Glass Doors -->
     <rect x="142" y="240" width="200" height="180" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
     <line x1="242" y1="240" x2="242" y2="420" stroke="#0284c7" stroke-width="3"/>
