@@ -3,7 +3,7 @@ import { Staff } from '../types/game';
 export const INITIAL_STAFF: Staff[] = [
   {
     id: 'staff_assistant_1',
-    name: 'Bé Lan Phụ Bếp',
+    name: 'Bé Lan',
     role: 'ASSISTANT',
     title: 'Phụ bếp nhanh nhẹn',
     avatar: '👧',
@@ -17,7 +17,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_barista_1',
-    name: 'Em Linh Pha Chế',
+    name: 'Em Linh',
     role: 'BARISTA',
     title: 'Pha chế quán nước',
     avatar: '🧋',
@@ -31,7 +31,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_mechanic_1',
-    name: 'Chú Tám Thợ Máy',
+    name: 'Chú Tám',
     role: 'MECHANIC',
     title: 'Thợ sửa xe lão luyện',
     avatar: '🔧',
@@ -45,7 +45,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_cook_1',
-    name: 'Anh Hải Đầu Bếp Phố',
+    name: 'Anh Hải',
     role: 'CHEF',
     title: 'Đầu bếp điêu luyện',
     avatar: '👨‍🍳',
@@ -59,7 +59,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_cleaner_1',
-    name: 'Cô Năm Dọn Dẹp',
+    name: 'Cô Năm',
     role: 'CLEANER',
     title: 'Giữ gìn vệ sinh 5 sao',
     avatar: '🧹',
@@ -73,7 +73,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_barber_1',
-    name: 'Anh Dũng Tay Kéo Vàng',
+    name: 'Anh Dũng',
     role: 'BARBER',
     title: 'Thợ hớt tóc bảnh bao',
     avatar: '✂️',
@@ -87,7 +87,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_marketer_1',
-    name: 'Tuấn Marketing',
+    name: 'Tuấn',
     role: 'MARKETER',
     title: 'Chuyên gia kéo khách',
     avatar: '📣',
@@ -101,7 +101,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_cashier_1',
-    name: 'Chị Mai Thu Ngân',
+    name: 'Chị Mai',
     role: 'CASHIER',
     title: 'Kế toán & Quản lý thu chi',
     avatar: '💵',
@@ -115,7 +115,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_baker_1',
-    name: 'Bé Trúc Thợ Bánh',
+    name: 'Bé Trúc',
     role: 'BAKER',
     title: 'Nghệ nhân bánh mì nóng',
     avatar: '🥐',
@@ -129,7 +129,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_chef_pho_1',
-    name: 'Bác Ba Nước Lèo',
+    name: 'Bác Ba',
     role: 'CHEF',
     title: 'Vua hầm xương gia truyền',
     avatar: '🍜',
@@ -143,7 +143,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_shipper_1',
-    name: 'Huy Shipper Siêu Tốc',
+    name: 'Cu Huy',
     role: 'SHIPPER',
     title: 'Tay lái giao hàng liên quận',
     avatar: '🛵',
@@ -157,7 +157,7 @@ export const INITIAL_STAFF: Staff[] = [
   },
   {
     id: 'staff_manager_1',
-    name: 'Hoàng Quản Lý Chuỗi',
+    name: 'Thèn Hoàng',
     role: 'MANAGER',
     title: 'Tổng điều hành nhượng quyền',
     avatar: '👔',
