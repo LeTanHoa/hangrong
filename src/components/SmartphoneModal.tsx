@@ -53,9 +53,21 @@ export const SmartphoneModal: React.FC = () => {
   const setQty = (id: string, delta: number) => {
     setPurchaseQtys((prev) => {
       const cur = prev[id] || 1;
-      const next = Math.max(1, Math.min(20, cur + delta));
+      const next = Math.max(1, Math.min(999, cur + delta));
       return { ...prev, [id]: next };
     });
+  };
+
+  const setDirectQty = (id: string, val: string) => {
+    if (val === '') {
+      setPurchaseQtys((prev) => ({ ...prev, [id]: 1 }));
+      return;
+    }
+    const parsed = parseInt(val, 10);
+    if (!isNaN(parsed)) {
+      const next = Math.max(1, Math.min(999, parsed));
+      setPurchaseQtys((prev) => ({ ...prev, [id]: next }));
+    }
   };
 
   const getQty = (id: string) => purchaseQtys[id] || 1;
@@ -270,19 +282,33 @@ export const SmartphoneModal: React.FC = () => {
                 </div>
 
                 {/* Instant Search Bar */}
-                <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className="flex items-center gap-2 min-w-0"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                >
                   <div className="relative flex-1 min-w-0">
                     <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       value={marketSearchQuery}
                       onChange={(e) => setMarketSearchQuery(e.target.value)}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onTouchStart={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      onKeyUp={(e) => e.stopPropagation()}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
                       placeholder="Tìm nguyên liệu (thịt, bánh mì, trứng, rau, bơ...)..."
                       className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-9 pr-8 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 transition"
                     />
                     {marketSearchQuery && (
                       <button
                         onClick={() => setMarketSearchQuery('')}
+                        onPointerDown={(e) => e.stopPropagation()}
                         className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-white rounded-md transition"
                         title="Xóa tìm kiếm"
                       >
@@ -344,15 +370,31 @@ export const SmartphoneModal: React.FC = () => {
                           <div className="flex flex-col items-end gap-1.5 shrink-0">
                             <div className="flex items-center gap-1 bg-slate-950 px-1 py-0.5 rounded-lg border border-slate-800">
                               <button
+                                type="button"
                                 onClick={() => setQty(item.id, -1)}
-                                className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded"
+                                className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded active:scale-95 transition"
+                                title="Giảm 1"
                               >
                                 <Minus className="w-3 h-3" />
                               </button>
-                              <span className="text-xs font-bold text-white px-1.5">{qty}</span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={999}
+                                value={qty}
+                                onChange={(e) => setDirectQty(item.id, e.target.value)}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onTouchStart={(e) => e.stopPropagation()}
+                                onKeyDown={(e) => e.stopPropagation()}
+                                onKeyUp={(e) => e.stopPropagation()}
+                                className="w-12 text-center bg-slate-900 border border-slate-700 rounded text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-emerald-400 py-0.5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              />
                               <button
+                                type="button"
                                 onClick={() => setQty(item.id, 1)}
-                                className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded"
+                                className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded active:scale-95 transition"
+                                title="Tăng 1"
                               >
                                 <Plus className="w-3 h-3" />
                               </button>
@@ -902,14 +944,8 @@ export const SmartphoneModal: React.FC = () => {
                             alt={member.name}
                             className="w-14 h-16 object-contain shrink-0 bg-slate-950/60 p-1 rounded-xl border border-slate-800"
                           />
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="font-bold text-sm text-white">{member.name}</span>
-                              {/* <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-semibold">
-                                {member.title}
-                              </span> */}
-                            </div>
-                            <p className="text-xs text-slate-400 mt-1">{member.description}</p>
+                          <div className="flex flex-col flex-1 min-w-0 justify-center">
+                            <span className="font-bold text-sm text-white">{member.name}</span>
                             <span className="text-[11px] text-amber-300 font-semibold mt-1">
                               Lương: {formatVND(member.dailyWage)} / ngày • Hiệu suất: +{Math.round(member.efficiencyBonus * 100)}%
                             </span>

@@ -5,6 +5,7 @@ import { RECIPE_MAP } from '../data/recipes';
 import { LOCATIONS, LOCATION_MAP } from '../data/locations';
 import { sounds } from '../audio/soundSystem';
 import { INITIAL_STAFF } from '../data/staff';
+import { STREET_SHOPS } from '../data/shops';
 
 interface CustomerVisual {
   id: string;
@@ -190,6 +191,7 @@ export class StreetScene extends Phaser.Scene {
     }
     if (store.activeModal) {
       this.input.enabled = false;
+      if (this.input.keyboard) this.input.keyboard.enabled = false;
     }
     this.unsubscribeCartUpgrade = useGameStore.subscribe((state, previousState) => {
       if (state.cartTier !== previousState.cartTier) {
@@ -209,6 +211,9 @@ export class StreetScene extends Phaser.Scene {
       }
       if (state.activeModal !== previousState.activeModal) {
         this.input.enabled = !state.activeModal;
+        if (this.input.keyboard) {
+          this.input.keyboard.enabled = !state.activeModal;
+        }
         if (state.activeModal) {
           this.playerTargetX = null;
           this.playerTargetY = null;
@@ -379,7 +384,7 @@ export class StreetScene extends Phaser.Scene {
 
     // Recurring customer visits to purchased/owned storefronts
     this.shopVisitorTimer = this.time.addEvent({
-      delay: 8500,
+      delay: 6200,
       callback: () => this.spawnOwnedShopVisitor(),
       loop: true,
     });
@@ -596,8 +601,18 @@ export class StreetScene extends Phaser.Scene {
     const ownedShops = shopsOnScreen.filter((s) => (store.shopLevels[s.shopId] || 0) > 0);
     if (ownedShops.length === 0) return;
 
-    // Pick a random owned shop to visit
-    const targetShop = Phaser.Utils.Array.GetRandom(ownedShops);
+    // Pick a shop to visit, weighted by customer traffic (busy shops get far more visitors)
+    const weightedPool: typeof ownedShops = [];
+    ownedShops.forEach((shopItem) => {
+      const shopDef = STREET_SHOPS.find((s) => s.id === shopItem.shopId);
+      const mult = shopDef?.trafficMultiplier || 1.0;
+      const weight = Math.max(1, Math.round(mult * 4));
+      for (let i = 0; i < weight; i++) {
+        weightedPool.push(shopItem);
+      }
+    });
+
+    const targetShop = Phaser.Utils.Array.GetRandom(weightedPool);
 
     const customerKeys = [
       'cust_student_uni',

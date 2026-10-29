@@ -115,6 +115,7 @@ interface GameState {
     ratingsSum: number;
     ratingsCount: number;
     recipeSalesCount: Record<string, number>;
+    shopDailyStats?: Record<string, { itemsSold: number; revenue: number }>;
   };
 
   // UI & Modals
@@ -237,6 +238,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     ratingsSum: 0,
     ratingsCount: 0,
     recipeSalesCount: {},
+    shopDailyStats: {},
   },
 
   activeModal: null,
@@ -505,15 +507,25 @@ export const useGameStore = create<GameState>((set, get) => ({
         const xp = Math.round(waitingReq.xpReward * bonusMultiplier);
 
         sounds.playCash();
-        set((prev) => ({
-          money: prev.money + payout,
-          xp: prev.xp + xp,
-          currentDayStats: {
-            ...prev.currentDayStats,
-            revenue: prev.currentDayStats.revenue + payout,
-            customersServed: prev.currentDayStats.customersServed + 1,
-          },
-        }));
+        set((prev) => {
+          const prevShopStat = prev.currentDayStats.shopDailyStats?.[assignedShopId] || { itemsSold: 0, revenue: 0 };
+          return {
+            money: prev.money + payout,
+            xp: prev.xp + xp,
+            currentDayStats: {
+              ...prev.currentDayStats,
+              revenue: prev.currentDayStats.revenue + payout,
+              customersServed: prev.currentDayStats.customersServed + 1,
+              shopDailyStats: {
+                ...(prev.currentDayStats.shopDailyStats || {}),
+                [assignedShopId]: {
+                  itemsSold: prevShopStat.itemsSold + 1,
+                  revenue: prevShopStat.revenue + payout,
+                },
+              },
+            },
+          };
+        });
 
         get().fulfillShopCustomerRequest(assignedShopId);
         get().addToast(
@@ -713,8 +725,16 @@ export const useGameStore = create<GameState>((set, get) => ({
       return { shopCustomerRequests: nextRequests };
     });
 
-    // Schedule next customer after 20 - 28 seconds (calmer, natural street pace)
-    const delayMs = 20000 + Math.floor(Math.random() * 8000);
+    // Schedule next customer according to shop's traffic tier
+    // VERY_HIGH: 9s - 14s (nhộn nhịp, khách ra vào liên tục)
+    // HIGH: 14s - 20s (đông khách)
+    // MEDIUM: 22s - 32s (vừa phải)
+    // LOW: 45s - 70s (ít khách, bình lặng)
+    const shop = STREET_SHOPS.find((s) => s.id === shopId);
+    const multiplier = Math.max(0.3, shop?.trafficMultiplier || 1.0);
+    const baseDelay = Math.round(24000 / multiplier);
+    const jitter = Math.round(6000 / multiplier);
+    const delayMs = Math.max(8000, baseDelay + Math.floor((Math.random() - 0.5) * jitter));
     setTimeout(() => {
       const state = get();
       if ((state.shopLevels[shopId] || 0) > 0) {
@@ -902,6 +922,13 @@ export const useGameStore = create<GameState>((set, get) => ({
         recipeSalesCount: {
           ...prev.currentDayStats.recipeSalesCount,
           [recipeId]: currentSales + (order.items[0]?.quantity || 1),
+        },
+        shopDailyStats: {
+          ...(prev.currentDayStats.shopDailyStats || {}),
+          banh_mi: {
+            itemsSold: ((prev.currentDayStats.shopDailyStats?.['banh_mi']?.itemsSold) || 0) + (order.items[0]?.quantity || 1),
+            revenue: ((prev.currentDayStats.shopDailyStats?.['banh_mi']?.revenue) || 0) + totalIncome,
+          },
         },
       },
     }));
@@ -1118,7 +1145,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       },
     }));
 
-    get().addToast('Đã tuyển nhân viên!', `${staffMember.name} (${staffMember.title}) đã gia nhập gánh hàng rong của bạn!`, 'success');
+    get().addToast('Đã tuyển nhân viên!', `${staffMember.name} đã gia nhập đội ngũ của bạn!`, 'success');
     get().saveCurrentGame();
     return true;
   },
@@ -1348,6 +1375,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         ratingsSum: 0,
         ratingsCount: 0,
         recipeSalesCount: {},
+        shopDailyStats: {},
       },
     });
 
@@ -1508,6 +1536,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         ratingsSum: 0,
         ratingsCount: 0,
         recipeSalesCount: {},
+        shopDailyStats: {},
       },
       activeModal: null,
       smartphoneApp: 'MARKET',

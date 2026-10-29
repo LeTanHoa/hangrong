@@ -44,6 +44,14 @@ export class BootScene extends Phaser.Scene {
     this.load.image('staff_chef_pho_1', 'assets/characters/staff_chef_pho_1.png');
     this.load.image('staff_shipper_1', 'assets/characters/staff_shipper_1.png');
     this.load.image('staff_manager_1', 'assets/characters/staff_manager_1.png');
+    this.load.image('staff_barista_2', 'assets/characters/staff_barista_2.png');
+    this.load.image('staff_chef_2', 'assets/characters/staff_chef_2.png');
+    this.load.image('staff_specialist_1', 'assets/characters/staff_specialist_1.png');
+    this.load.image('staff_manager_2', 'assets/characters/staff_manager_2.png');
+    this.load.image('staff_accountant_1', 'assets/characters/staff_accountant_1.png');
+    this.load.image('staff_supervisor_1', 'assets/characters/staff_supervisor_1.png');
+    this.load.image('staff_director_1', 'assets/characters/staff_director_1.png');
+    this.load.image('staff_executive_1', 'assets/characters/staff_executive_1.png');
     this.load.image('staff_supplier', 'assets/characters/staff_supplier.png');
 
     // 5. Load 12 Distinct Customer Types

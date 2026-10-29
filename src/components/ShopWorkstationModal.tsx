@@ -29,6 +29,8 @@ import {
   Check,
   TrendingUp,
   Zap,
+  Package,
+  Flame,
 } from 'lucide-react';
 import { sounds } from '../audio/soundSystem';
 
@@ -40,6 +42,44 @@ export const ShopWorkstationModal: React.FC = () => {
 
   const shopLevel = store.shopLevels[shopId] || 0;
   const isOwned = shopLevel > 0;
+
+  // Daily shop performance & revenue statistics
+  const shopDailyStat = store.currentDayStats.shopDailyStats?.[shopId] || { itemsSold: 0, revenue: 0 };
+  const dailyItemsSold = shopDailyStat.itemsSold;
+  const dailyBonusIncome = isOwned && shopInfo ? shopInfo.dailyBonusIncome * shopLevel : 0;
+  const totalDailyRevenue = shopDailyStat.revenue + dailyBonusIncome;
+
+  const trafficTier = shopInfo?.trafficTier || 'MEDIUM';
+  const trafficLabel = shopInfo?.trafficLabel || 'Vừa phải';
+
+  const trafficBadge = (() => {
+    switch (trafficTier) {
+      case 'VERY_HIGH':
+        return {
+          icon: '🔥',
+          text: 'Rất đông khách',
+          bg: 'bg-rose-500/25 text-rose-300 border-rose-500/50',
+        };
+      case 'HIGH':
+        return {
+          icon: '⚡',
+          text: 'Đông đúc',
+          bg: 'bg-amber-500/25 text-amber-300 border-amber-500/50',
+        };
+      case 'LOW':
+        return {
+          icon: '🍃',
+          text: 'Ít khách',
+          bg: 'bg-slate-700/50 text-slate-300 border-slate-600/50',
+        };
+      default:
+        return {
+          icon: '☕',
+          text: 'Vừa phải',
+          bg: 'bg-sky-500/25 text-sky-300 border-sky-500/50',
+        };
+    }
+  })();
 
   const assignedStaffId = Object.keys(store.staffAssignments || {}).find(
     (sId) => store.staffAssignments[sId] === shopId && store.staff[sId],
@@ -161,16 +201,26 @@ export const ShopWorkstationModal: React.FC = () => {
     const finalXP = Math.round(activeService.xpReward * (multiplier >= 1.3 ? 1.5 : 1.0));
     const isPerfect = multiplier >= 1.3;
 
-    useGameStore.setState((prev) => ({
-      money: prev.money + finalPayout,
-      xp: prev.xp + finalXP,
-      reputationRating: Math.min(5.0, Number((prev.reputationRating + (isPerfect ? 0.08 : 0.03)).toFixed(2))),
-      currentDayStats: {
-        ...prev.currentDayStats,
-        revenue: prev.currentDayStats.revenue + finalPayout,
-        customersServed: prev.currentDayStats.customersServed + 1,
-      },
-    }));
+    useGameStore.setState((prev) => {
+      const prevShopStat = prev.currentDayStats.shopDailyStats?.[shopId] || { itemsSold: 0, revenue: 0 };
+      return {
+        money: prev.money + finalPayout,
+        xp: prev.xp + finalXP,
+        reputationRating: Math.min(5.0, Number((prev.reputationRating + (isPerfect ? 0.08 : 0.03)).toFixed(2))),
+        currentDayStats: {
+          ...prev.currentDayStats,
+          revenue: prev.currentDayStats.revenue + finalPayout,
+          customersServed: prev.currentDayStats.customersServed + 1,
+          shopDailyStats: {
+            ...(prev.currentDayStats.shopDailyStats || {}),
+            [shopId]: {
+              itemsSold: prevShopStat.itemsSold + 1,
+              revenue: prevShopStat.revenue + finalPayout,
+            },
+          },
+        },
+      };
+    });
 
     if (store.shopCustomerRequests[shopId]?.serviceId === activeService.id) {
       store.fulfillShopCustomerRequest(shopId);
@@ -231,9 +281,16 @@ export const ShopWorkstationModal: React.FC = () => {
                     <Lock className="w-2.5 h-2.5" /> CHƯA MỞ
                   </span>
                 )}
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[9px] font-black border flex items-center gap-0.5 ${trafficBadge.bg}`}
+                  title={trafficLabel}
+                >
+                  <span>{trafficBadge.icon}</span>
+                  <span>{trafficBadge.text}</span>
+                </span>
               </div>
               <p className="text-[10px] text-slate-300 font-medium truncate">
-                Chủ: <strong className="text-amber-300">{shopInfo?.ownerName || shopSpec.ownerTitle}</strong>
+                Chủ: <strong className="text-amber-300">{shopInfo?.ownerName || shopSpec.ownerTitle}</strong> • <span className="text-slate-400">{trafficLabel}</span>
               </p>
             </div>
           </div>
@@ -257,6 +314,50 @@ export const ShopWorkstationModal: React.FC = () => {
         <div className="flex-1 grid grid-cols-12 min-h-0 overflow-hidden">
           {/* ----------------- CỘT TRÁI (40%): DANH SÁCH NGHIỆP VỤ & NÂNG CẤP ----------------- */}
           <div className="col-span-5 border-r border-slate-800 bg-slate-900/40 p-2 sm:p-2.5 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar">
+            {/* KPI Thống Kê Kinh Doanh Trong Ngày */}
+            <div className="p-2 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-col gap-1.5 shadow-sm shrink-0">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3 text-amber-400" />
+                  Kinh Doanh Hôm Nay
+                </span>
+                <span
+                  className={`px-1.5 py-0.5 rounded-full text-[9px] font-black border flex items-center gap-1 ${trafficBadge.bg}`}
+                >
+                  <span>{trafficBadge.icon}</span>
+                  <span>{trafficBadge.text}</span>
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                <div className="p-1.5 rounded-lg bg-slate-900/90 border border-slate-800/80">
+                  <div className="text-[9px] font-semibold text-slate-400 flex items-center gap-1 truncate">
+                    <Package className="w-3 h-3 text-emerald-400 shrink-0" />
+                    <span>Hàng hóa bán ra</span>
+                  </div>
+                  <div className="text-xs font-black text-white mt-0.5">
+                    {dailyItemsSold} <span className="text-[9px] text-slate-400 font-normal">món/đơn</span>
+                  </div>
+                </div>
+
+                <div className="p-1.5 rounded-lg bg-slate-900/90 border border-slate-800/80">
+                  <div className="text-[9px] font-semibold text-slate-400 flex items-center gap-1 truncate">
+                    <Coins className="w-3 h-3 text-amber-400 shrink-0" />
+                    <span>Tiền bán hôm nay</span>
+                  </div>
+                  <div className="text-xs font-black text-amber-300 mt-0.5">
+                    {formatVND(totalDailyRevenue)}
+                  </div>
+                </div>
+              </div>
+
+              {dailyBonusIncome > 0 && (
+                <div className="text-[9px] text-emerald-400 font-medium flex items-center justify-between px-0.5">
+                  <span className="text-slate-400">Hoa hồng thụ động:</span>
+                  <span className="font-bold">+{formatVND(dailyBonusIncome)}/ngày</span>
+                </div>
+              )}
+            </div>
             {/* If shop is unowned: Unlock Callout */}
             {!isOwned && shopInfo && (
               <div className="p-2 rounded-xl bg-amber-950/40 border border-amber-500/40 text-center">

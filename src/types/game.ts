@@ -128,16 +128,16 @@ export type StaffRole =
 export interface Staff {
   id: string;
   name: string;
-  role: StaffRole;
-  title: string;
   avatar: string;
   dailyWage: number;
   hiringCost: number;
   requiredLevel: number;
   hired: boolean;
   skillLevel: number;
-  description: string;
   efficiencyBonus: number;
+  role?: StaffRole;
+  title?: string;
+  description?: string;
 }
 
 export interface LocationArea {
@@ -267,6 +267,7 @@ export interface SaveSchema {
     ratingsSum: number;
     ratingsCount: number;
     recipeSalesCount: Record<string, number>;
+    shopDailyStats?: Record<string, { itemsSold: number; revenue: number }>;
   };
   settings: GameSettings;
   tutorialCompleted: boolean;

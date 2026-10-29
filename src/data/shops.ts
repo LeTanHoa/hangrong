@@ -1,4 +1,9 @@
+export type ShopTrafficTier = 'VERY_HIGH' | 'HIGH' | 'MEDIUM' | 'LOW';
+
 export interface StreetShop {
+  trafficTier: ShopTrafficTier;
+  trafficLabel: string;
+  trafficMultiplier: number;
   id: string;
   name: string;
   streetScreen: number;
@@ -34,6 +39,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 0,
     perksDescription: 'Trạm chế biến cốt lõi: Nấu bánh mì thịt, bánh mì ốp la và các món điểm tâm.',
     badgeColor: 'bg-orange-500',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Giờ sáng & trưa)',
+    trafficMultiplier: 2.2,
   },
   {
     id: 'tra_da',
@@ -50,6 +58,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 4500,
     perksDescription: 'Tăng 20% doanh thu đồ uống, nhận 4.500đ hoa hồng mặt bằng mỗi ngày.',
     badgeColor: 'bg-teal-500',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Giải khát vỉa hè)',
+    trafficMultiplier: 1.6,
   },
   {
     id: 'sua_xe',
@@ -66,6 +77,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 9500,
     perksDescription: 'Tăng 25% lưu lượng khách đi xe máy ghé mua mang đi, nhận 9.500đ/ngày.',
     badgeColor: 'bg-red-500',
+    trafficTier: 'LOW',
+    trafficLabel: 'Ít khách (Bơm vá khi cần)',
+    trafficMultiplier: 0.45,
   },
   {
     id: 'cat_toc',
@@ -82,6 +96,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 18000,
     perksDescription: 'Tăng +0.5 sao danh tiếng toàn con phố, nhận 18.000đ/ngày.',
     badgeColor: 'bg-blue-500',
+    trafficTier: 'LOW',
+    trafficLabel: 'Bình lặng (Hớt tóc định kỳ)',
+    trafficMultiplier: 0.5,
   },
 
   // =================== PHỐ 2: CỔNG TRƯỜNG HỌC ===================
@@ -100,6 +117,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 22000,
     perksDescription: 'Tăng 30% khách hàng học sinh, sinh viên, nhận 22.000đ/ngày.',
     badgeColor: 'bg-indigo-500',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Giờ tan trường)',
+    trafficMultiplier: 2,
   },
   {
     id: 'boba_tea',
@@ -116,6 +136,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 28000,
     perksDescription: 'Tăng 35% doanh thu các món đồ uống giải khát, nhận 28.000đ/ngày.',
     badgeColor: 'bg-pink-500',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Học sinh & Giới trẻ)',
+    trafficMultiplier: 1.7,
   },
   {
     id: 'fried_skewers',
@@ -132,6 +155,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 26000,
     perksDescription: 'Tăng 40% doanh thu các món ăn vặt chiên nóng, nhận 26.000đ/ngày.',
     badgeColor: 'bg-amber-600',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Ăn vặt chiều tối)',
+    trafficMultiplier: 1,
   },
   {
     id: 'bookstore',
@@ -148,6 +174,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 30000,
     perksDescription: 'Tăng sự hài lòng của thực khách thêm +10%, nhận 30.000đ/ngày.',
     badgeColor: 'bg-emerald-600',
+    trafficTier: 'LOW',
+    trafficLabel: 'Thưa thớt (Kén người đọc sách)',
+    trafficMultiplier: 0.4,
   },
 
   // =================== PHỐ 3: CHỢ ĐẦU MỐI ===================
@@ -166,6 +195,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 35000,
     perksDescription: 'Tăng 40% lưu lượng khách nội trợ và tiểu thương, nhận 35.000đ/ngày.',
     badgeColor: 'bg-yellow-600',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Chợ sớm nườm nượp)',
+    trafficMultiplier: 2.1,
   },
   {
     id: 'fresh_veggies',
@@ -182,6 +214,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 40000,
     perksDescription: 'Giảm 10% chi phí mua dưa leo, ngò rí và đồ chua, nhận 40.000đ/ngày.',
     badgeColor: 'bg-green-600',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Nội trợ mua sắm)',
+    trafficMultiplier: 1.5,
   },
   {
     id: 'gio_cha',
@@ -198,6 +233,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 46000,
     perksDescription: 'Tăng 25% giá bán các món bánh mì kẹp chả lụa thịt nguội, nhận 46.000đ/ngày.',
     badgeColor: 'bg-red-600',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Mua ăn kèm bữa cơm)',
+    trafficMultiplier: 0.9,
   },
   {
     id: 'spice_shop',
@@ -214,6 +252,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 52000,
     perksDescription: 'Tăng tỷ lệ nhận tiền Tip từ thực khách thêm +15%, nhận 52.000đ/ngày.',
     badgeColor: 'bg-orange-600',
+    trafficTier: 'LOW',
+    trafficLabel: 'Thưa thớt (Gia vị dùng lâu)',
+    trafficMultiplier: 0.45,
   },
 
   // =================== PHỐ 4: KHU VĂN PHÒNG LANDMARK ===================
@@ -232,6 +273,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 60000,
     perksDescription: 'Tăng 50% khách hàng công sở văn phòng, nhận 60.000đ/ngày.',
     badgeColor: 'bg-blue-600',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Dân công sở cao ốc)',
+    trafficMultiplier: 2,
   },
   {
     id: 'highland_coffee',
@@ -248,6 +292,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 70000,
     perksDescription: 'Tăng 30% doanh thu các đơn hàng combo cà phê ăn sáng, nhận 70.000đ/ngày.',
     badgeColor: 'bg-amber-700',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Gặp gỡ & Làm việc)',
+    trafficMultiplier: 1.6,
   },
   {
     id: 'bento_box',
@@ -264,6 +311,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 82000,
     perksDescription: 'Tăng giá trị trung bình mỗi đơn hàng thêm +25%, nhận 82.000đ/ngày.',
     badgeColor: 'bg-teal-600',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Cao điểm cơm trưa)',
+    trafficMultiplier: 1.7,
   },
   {
     id: 'paris_baguette',
@@ -280,6 +330,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 95000,
     perksDescription: 'Tăng +1 sao uy tín thương hiệu trên toàn thành phố, nhận 95.000đ/ngày.',
     badgeColor: 'bg-rose-600',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Bánh ngọt cao cấp)',
+    trafficMultiplier: 0.95,
   },
 
   // =================== PHỐ 5: CÔNG VIÊN TRUNG TÂM ===================
@@ -298,6 +351,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 105000,
     perksDescription: 'Tăng 45% lượng khách gia đình có trẻ nhỏ, nhận 105.000đ/ngày.',
     badgeColor: 'bg-emerald-500',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Đi bộ & Hóng gió)',
+    trafficMultiplier: 1.6,
   },
   {
     id: 'ice_cream',
@@ -314,6 +370,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 120000,
     perksDescription: 'Tăng 30% doanh thu các món đồ ngọt và giải nhiệt, nhận 120.000đ/ngày.',
     badgeColor: 'bg-fuchsia-600',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Trẻ em & Gia đình)',
+    trafficMultiplier: 1.5,
   },
   {
     id: 'nuoc_mia',
@@ -330,6 +389,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 140000,
     perksDescription: 'Tăng 35% tốc độ phục vụ đồ uống mang đi, nhận 140.000đ/ngày.',
     badgeColor: 'bg-lime-600',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Khát nước ngày hè)',
+    trafficMultiplier: 1.5,
   },
   {
     id: 'bike_rental',
@@ -346,6 +408,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 160000,
     perksDescription: 'Tăng 50% lượng khách ghé mua vào ngày cuối tuần, nhận 160.000đ/ngày.',
     badgeColor: 'bg-sky-600',
+    trafficTier: 'LOW',
+    trafficLabel: 'Thưa thớt (Dạo mát cuối tuần)',
+    trafficMultiplier: 0.4,
   },
 
   // =================== PHỐ 6: BẾN XE LIÊN TỈNH ===================
@@ -364,6 +429,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 180000,
     perksDescription: 'Mở rộng giờ bán hàng xuyên đêm, tăng 40% doanh thu ca đêm, nhận 180.000đ/ngày.',
     badgeColor: 'bg-violet-600',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Khách vãng lai liên tục)',
+    trafficMultiplier: 2.2,
   },
   {
     id: 'com_tam',
@@ -380,6 +448,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 210000,
     perksDescription: 'Tăng 30% doanh thu các món cơm và đồ mặn nóng sốt, nhận 210.000đ/ngày.',
     badgeColor: 'bg-red-700',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Ăn chắc bụng trưa tối)',
+    trafficMultiplier: 2,
   },
   {
     id: 'banh_bao',
@@ -396,6 +467,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 240000,
     perksDescription: 'Tăng 40% tốc độ gói món mang đi (Takeaway), nhận 240.000đ/ngày.',
     badgeColor: 'bg-yellow-700',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Mua vội mang đi)',
+    trafficMultiplier: 1.1,
   },
   {
     id: 'kiosk_drinks',
@@ -412,6 +486,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 280000,
     perksDescription: 'Tăng 25% tỷ lệ khách mua kèm đồ uống khi gọi món, nhận 280.000đ/ngày.',
     badgeColor: 'bg-cyan-700',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Nước khoáng đóng chai)',
+    trafficMultiplier: 1,
   },
 
   // =================== PHỐ 7: PHỐ ẨM THỰC ĐÊM ===================
@@ -430,6 +507,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 320000,
     perksDescription: 'Mở rộng thị phần Phố Ẩm Thực, tăng gấp đôi lượng khách buổi sáng, nhận 320.000đ/ngày.',
     badgeColor: 'bg-rose-500',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Đặc sản gia truyền)',
+    trafficMultiplier: 2.3,
   },
   {
     id: 'tap_hoa',
@@ -446,6 +526,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 370000,
     perksDescription: 'Giảm 15% giá nhập nguyên liệu tại Chợ, tăng sức chứa kho thêm +30 món, nhận 370.000đ/ngày.',
     badgeColor: 'bg-sky-500',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Bà con chòm xóm)',
+    trafficMultiplier: 1.1,
   },
   {
     id: 'banh_trang',
@@ -462,6 +545,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 430000,
     perksDescription: 'Tăng 50% lượng khách học sinh sinh viên giờ tan tầm, nhận 430.000đ/ngày.',
     badgeColor: 'bg-amber-500',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Ăn vặt hot hit)',
+    trafficMultiplier: 1.7,
   },
   {
     id: 'sua_khoa',
@@ -478,6 +564,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 500000,
     perksDescription: 'Trở thành "Đại Bản Doanh Phố", nhận thụ động 500.000đ/ngày và thu hút khách VIP đại gia.',
     badgeColor: 'bg-emerald-500',
+    trafficTier: 'LOW',
+    trafficLabel: 'Ít khách (Chỉ khi kẹt khóa/lạc chìa)',
+    trafficMultiplier: 0.35,
   },
 
   // =================== PHỐ 8: TRUNG TÂM THÀNH PHỐ LANDMARK ===================
@@ -496,6 +585,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 600000,
     perksDescription: 'Tăng 60% lượng khách VIP giàu có với sức chi tiêu gấp 3 lần, nhận 600.000đ/ngày.',
     badgeColor: 'bg-amber-500',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Hàng hiệu xa xỉ)',
+    trafficMultiplier: 0.85,
   },
   {
     id: 'kiosk_5star',
@@ -512,6 +604,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 700000,
     perksDescription: 'Nhân đôi giá bán tất cả các món ăn cao cấp, nhận 700.000đ/ngày.',
     badgeColor: 'bg-red-500',
+    trafficTier: 'LOW',
+    trafficLabel: 'Thưa thớt (Đồ lưu niệm du khách)',
+    trafficMultiplier: 0.45,
   },
   {
     id: 'bingsu',
@@ -528,6 +623,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 850000,
     perksDescription: 'Tăng 50% doanh thu các món kem và tráng miệng mát lạnh, nhận 850.000đ/ngày.',
     badgeColor: 'bg-orange-500',
+    trafficTier: 'MEDIUM',
+    trafficLabel: 'Vừa phải (Tráng miệng giải nhiệt)',
+    trafficMultiplier: 1,
   },
   {
     id: 'french_pastry',
@@ -544,6 +642,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 1000000,
     perksDescription: 'Tăng +2 sao danh tiếng toàn thành phố, nhận 1.000.000đ/ngày.',
     badgeColor: 'bg-purple-600',
+    trafficTier: 'LOW',
+    trafficLabel: 'Bình lặng (Khách sành điệu)',
+    trafficMultiplier: 0.5,
   },
 
   // =================== PHỐ 9: TRUNG TÂM THƯƠNG MẠI CO.OPMART ĐÀ NẴNG ===================
@@ -562,6 +663,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 1300000,
     perksDescription: 'Tăng 80% tốc độ nướng bánh mì và tăng gấp đôi sản lượng bán ra, nhận 1.300.000đ/ngày.',
     badgeColor: 'bg-amber-600',
+    trafficTier: 'HIGH',
+    trafficLabel: 'Đông đúc (Bánh mì tươi mới)',
+    trafficMultiplier: 1.8,
   },
   {
     id: 'coop_hypermarket',
@@ -578,6 +682,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 1800000,
     perksDescription: 'Tăng 100% lưu lượng khách mua sắm gia đình, nhận 1.800.000đ/ngày.',
     badgeColor: 'bg-blue-600',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Đại siêu thị sầm uất nhất)',
+    trafficMultiplier: 2.5,
   },
   {
     id: 'coop_service',
@@ -594,6 +701,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 2400000,
     perksDescription: 'Mở rộng bán kính giao hàng online toàn thành phố, nhận 2.400.000đ/ngày.',
     badgeColor: 'bg-teal-600',
+    trafficTier: 'LOW',
+    trafficLabel: 'Thưa thớt (Bảo hành & Đổi quà)',
+    trafficMultiplier: 0.4,
   },
   {
     id: 'coop_foodcourt',
@@ -610,6 +720,9 @@ export const STREET_SHOPS: StreetShop[] = [
     dailyBonusIncome: 3000000,
     perksDescription: 'Đạt danh hiệu "Vua Ẩm Thực Đường Phố", nhận hoa hồng tối đa 3.000.000đ/ngày.',
     badgeColor: 'bg-emerald-600',
+    trafficTier: 'VERY_HIGH',
+    trafficLabel: 'Rất đông khách (Đại khu ẩm thực gia đình)',
+    trafficMultiplier: 2.3,
   },
 ];
 
