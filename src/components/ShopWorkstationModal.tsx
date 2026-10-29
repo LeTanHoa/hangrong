@@ -505,7 +505,7 @@ export const ShopWorkstationModal: React.FC = () => {
                       <Star className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
                       <div className="min-w-0">
                         <span className="font-bold text-slate-200 block truncate">
-                          Uy tín con phố: {reqRep.toFixed(1)}⭐
+                          Uy tín con phố lớn hơn: {reqRep.toFixed(1)}⭐
                         </span>
                         <span className="text-[9px] text-slate-400 block truncate">
                           Hiện tại: {store.reputationRating.toFixed(1)}⭐

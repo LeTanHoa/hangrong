@@ -387,12 +387,12 @@ export const ExecutiveSidebar: React.FC = () => {
                   <span className="font-bold">Chưa có khách chờ tại xe</span>
                   <button
                     onClick={() => {
-                      sounds.playBell();
+                      sounds.playClick();
                       store.spawnCustomerOrder();
                     }}
                     className="mt-2 px-2.5 py-0.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 rounded-lg font-bold text-[10px] transition"
                   >
-                    🔔 Mời khách ngay
+                    Mời khách ngay
                   </button>
                 </div>
               ) : (
@@ -523,7 +523,7 @@ export const ExecutiveSidebar: React.FC = () => {
           <div className="grid grid-cols-4 gap-1 pt-1 border-t border-slate-800/50">
             <button
               onClick={() => {
-                sounds.playBell();
+                sounds.playClick();
                 store.spawnCustomerOrder();
               }}
               className="py-1 rounded-md bg-slate-800/80 hover:bg-slate-750 text-slate-300 hover:text-white flex flex-col items-center justify-center text-[8px] font-bold transition active:scale-95"

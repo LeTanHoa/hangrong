@@ -599,7 +599,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       tableIndex: tableIdx ?? Math.floor(Math.random() * 3),
     };
 
-    sounds.playBell();
     set((prev) => ({
       orders: [...prev.orders, newOrder],
     }));
@@ -1290,7 +1289,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((prev) => ({
       sidewalkMesses: [...prev.sidewalkMesses, mess],
     }));
-    sounds.playAlert();
     const animalName = mess.animalType === 'dog' ? 'Chú chó vàng' : 'Mèo hoang';
     get().addToast(
       '⚠️ Cảnh báo phóng uế bừa bãi!',

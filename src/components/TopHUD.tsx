@@ -258,17 +258,17 @@ export const TopHUD: React.FC = () => {
               <span>Trạm Bếp Nấu Ăn</span>
             </button>
 
-            {/* 3. Call Customers Bell */}
+            {/* 3. Call Customers */}
             <button
               onClick={() => {
-                sounds.playBell();
+                sounds.playClick();
                 store.spawnCustomerOrder();
               }}
               className="flex items-center justify-between p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold text-xs transition active:scale-95"
             >
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-amber-400" />
-                <span>Rung Chuông Mời Khách</span>
+                <span>Mời Thêm Khách Hàng</span>
               </div>
               <span className="text-[10px] text-amber-400 font-bold">+1 Khách</span>
             </button>
