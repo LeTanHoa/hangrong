@@ -147,7 +147,12 @@ export class StreetScene extends Phaser.Scene {
   private sidewalkWalkers: SidewalkWalker[] = [];
   private shopCustomerVisuals: Map<string, ShopCustomerVisual> = new Map();
   private assignedStaffVisuals: Map<string, AssignedStaffVisual> = new Map();
-  private scooterGroup!: Phaser.GameObjects.Group;
+  private carGroup!: Phaser.GameObjects.Group;
+  private strayPetsGroup!: Phaser.GameObjects.Group;
+  private sidewalkPoopVisuals: Map<string, Phaser.GameObjects.Container> = new Map();
+  private petSpawnTimer?: Phaser.Time.TimerEvent;
+  private carTimer?: Phaser.Time.TimerEvent;
+  private unsubscribeMesses?: () => void;
   private rainEmitter?: Phaser.GameObjects.Particles.ParticleEmitter;
   private isRaining = false;
   private lightOverlay!: Phaser.GameObjects.Rectangle;
@@ -156,6 +161,13 @@ export class StreetScene extends Phaser.Scene {
   private currentCartTier = 1;
   private unsubscribeCartUpgrade?: () => void;
   private walkBobTimer = 0;
+
+  private handleNavToScreen = (e: any) => {
+    const screen = e.detail?.screen;
+    if (typeof screen === 'number' && screen >= 1 && screen <= 9) {
+      this.switchStreetScreen(screen);
+    }
+  };
 
   constructor() {
     super({ key: 'StreetScene' });
@@ -223,16 +235,26 @@ export class StreetScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.unsubscribeCartUpgrade?.();
       this.unsubscribeCartUpgrade = undefined;
+      this.unsubscribeMesses?.();
+      this.unsubscribeMesses = undefined;
       this.shopVisitorTimer?.destroy();
       this.shopVisitorTimer = undefined;
+      this.petSpawnTimer?.destroy();
+      this.petSpawnTimer = undefined;
+      this.carTimer?.destroy();
+      this.carTimer = undefined;
       this.clearAllShopCustomerVisuals();
       this.clearAllAssignedStaffVisuals();
+      this.sidewalkPoopVisuals.forEach((c) => c.destroy());
+      this.sidewalkPoopVisuals.clear();
+      window.removeEventListener('nav_to_screen', this.handleNavToScreen);
       this.sys.displayList.events.off(
         Phaser.Scenes.Events.ADDED_TO_SCENE,
         this.removeMissingTexturePlaceholder,
         this,
       );
     });
+    window.addEventListener('nav_to_screen', this.handleNavToScreen);
     const loc = LOCATION_MAP[this.currentLocationId] || LOCATION_MAP['sidewalk_start'];
 
     // 1. Dynamic Location Background (Isometric 2.5D Area)
@@ -308,13 +330,29 @@ export class StreetScene extends Phaser.Scene {
     this.createSidewalkWalkers();
     this.setupScreenNavigation(width, height);
 
-    // 6. Motorbike traffic group in the street (cruises along roadway below curb)
-    this.scooterGroup = this.add.group();
-    this.time.addEvent({
-      delay: 5500,
-      callback: () => this.spawnPassingScooter(),
+    // 6. Realistic Automobile Traffic on Roadway (two-way street below curb)
+    this.carGroup = this.add.group();
+    this.carTimer = this.time.addEvent({
+      delay: 5800,
+      callback: () => this.spawnPassingCar(),
       loop: true,
     });
+    this.time.delayedCall(1200, () => this.spawnPassingCar());
+
+    // 6.5. Stray Pets & Sidewalk Messes (Dogs/Cats pooping, cleaned for +5 XP)
+    this.strayPetsGroup = this.add.group();
+    this.rebuildSidewalkPoopVisuals();
+    this.unsubscribeMesses = useGameStore.subscribe((state, prevState) => {
+      if (state.sidewalkMesses !== prevState.sidewalkMesses) {
+        this.rebuildSidewalkPoopVisuals();
+      }
+    });
+    this.petSpawnTimer = this.time.addEvent({
+      delay: 36000,
+      callback: () => this.triggerStrayPetEvent(),
+      loop: true,
+    });
+    this.time.delayedCall(14000, () => this.triggerStrayPetEvent());
 
     // 7. Rain particles
     this.createRainEffect();
@@ -1309,6 +1347,7 @@ export class StreetScene extends Phaser.Scene {
         this.updateShopCustomerVisuals();
         this.updateAssignedStaffVisuals();
         this.updateCustomerEntities(0.016);
+        this.rebuildSidewalkPoopVisuals();
       },
     });
   }
@@ -1364,23 +1403,312 @@ export class StreetScene extends Phaser.Scene {
     this.rainEmitter = particles;
   }
 
-  private spawnPassingScooter() {
-    // Strictly on the roadway below sidewalk curb (y: 950 to 990)
-    const yPos = Phaser.Math.Between(950, 990);
-    const scooter = this.add.sprite(-120, yPos, 'scooter_bike');
-    scooter.setScale(1.7);
-    scooter.setDepth(yPos);
-    this.scooterGroup.add(scooter);
+  /**
+   * Spawns realistic automobiles, sedans, Mai Linh taxis, SUVs, and delivery trucks
+   * driving along the two-way asphalt roadway below the sidewalk curb.
+   */
+  private spawnPassingCar() {
+    const width = this.scale.width;
+    const carKeys = [
+      'car_sedan_white',
+      'car_taxi_green',
+      'car_suv_red',
+      'car_pickup_blue',
+      'car_delivery_van',
+    ];
+    const key = Phaser.Utils.Array.GetRandom(carKeys);
+    if (!this.textures.exists(key)) return;
 
+    // Two-way realistic traffic below sidewalk curb:
+    // Lane 1: Upper lane (y: 935 to 955) drives Left -> Right
+    // Lane 2: Lower lane (y: 965 to 990) drives Right -> Left
+    const isLeftToRight = Math.random() > 0.45;
+    const yPos = isLeftToRight
+      ? Phaser.Math.Between(935, 955)
+      : Phaser.Math.Between(965, 990);
+    const startX = isLeftToRight ? -170 : width + 170;
+    const endX = isLeftToRight ? width + 170 : -170;
+
+    const car = this.add.sprite(startX, yPos, key);
+    car.setScale(0.96);
+    car.setDepth(yPos);
+    car.setFlipX(!isLeftToRight);
+    car.setInteractive({ useHandCursor: true });
+
+    car.on('pointerdown', () => {
+      sounds.playClick();
+      const honkText = Phaser.Utils.Array.GetRandom([
+        '🚗 Bíp bíp!',
+        '🚙 Nhường đường nào!',
+        '🚕 Bon bon trên phố!',
+        '🚗 Xin đường nhé!',
+      ]);
+      this.showFloatingMessage(car.x, car.y - 48, honkText);
+    });
+
+    this.carGroup.add(car);
+
+    // Subtle engine & suspension vibration
+    const bounceTween = this.tweens.add({
+      targets: car,
+      y: yPos - 1.5,
+      duration: 150,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    const duration = Phaser.Math.Between(3400, 4400);
     this.tweens.add({
-      targets: scooter,
-      x: this.scale.width + 120,
-      duration: 3200,
+      targets: car,
+      x: endX,
+      duration,
       ease: 'Linear',
       onComplete: () => {
-        scooter.destroy();
+        bounceTween.stop();
+        car.destroy();
       },
     });
+  }
+
+  /**
+   * Stray dog or cat trots onto sidewalk, squats to poop, alerts player, and runs off.
+   */
+  private triggerStrayPetEvent() {
+    if (useGameStore.getState().activeModal) return;
+    const store = useGameStore.getState();
+
+    // Prevent excessive messes: max 3 total across all 9 streets, max 1 on current screen
+    const messesOnThisScreen = store.sidewalkMesses.filter((m) => m.streetScreen === this.currentStreetScreen);
+    if (store.sidewalkMesses.length >= 3 || messesOnThisScreen.length >= 1) return;
+
+    const width = this.scale.width;
+    const isDog = Math.random() > 0.45;
+    const animalType: 'dog' | 'cat' = isDog ? 'dog' : 'cat';
+    const petKey = isDog ? 'pet_dog_chibi' : 'pet_cat_chibi';
+    if (!this.textures.exists(petKey)) return;
+
+    // Enters from sidewalk edge
+    const fromLeft = Math.random() > 0.5;
+    const startX = fromLeft ? -50 : width + 50;
+    const startY = Phaser.Math.Between(550, 640);
+    const targetX = Phaser.Math.Between(300, 1300);
+    const targetY = Phaser.Math.Between(560, 660);
+
+    const pet = this.add.sprite(startX, startY, petKey);
+    pet.setScale(0.82);
+    pet.setDepth(startY);
+    pet.setFlipX(!fromLeft);
+    this.strayPetsGroup.add(pet);
+
+    // Running bob tween
+    const runBobTween = this.tweens.add({
+      targets: pet,
+      y: targetY - 4,
+      duration: 160,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    // Walk to target spot
+    this.tweens.add({
+      targets: pet,
+      x: targetX,
+      y: targetY,
+      duration: 2200,
+      ease: 'Linear',
+      onUpdate: () => {
+        pet.setDepth(pet.y);
+      },
+      onComplete: () => {
+        runBobTween.stop();
+        pet.setY(targetY);
+
+        // Pooping squat animation
+        this.tweens.add({
+          targets: pet,
+          scaleY: 0.65,
+          scaleX: 0.88,
+          duration: 320,
+          yoyo: true,
+          repeat: 3,
+          ease: 'Sine.easeInOut',
+          onComplete: () => {
+            // Emote bubble
+            const barkText = isDog ? '🐶 💩 Gâu gâu! (Phóng uế)' : '🐱 💩 Meo meo! (Phóng uế)';
+            this.showFloatingMessage(targetX, targetY - 45, barkText);
+
+            // Register mess in store
+            const messId = `mess_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+            store.spawnSidewalkMess({
+              id: messId,
+              streetScreen: this.currentStreetScreen,
+              x: targetX,
+              y: targetY,
+              animalType,
+              createdAt: Date.now(),
+            });
+
+            // Pet trots away offscreen
+            const exitLeft = Math.random() > 0.5;
+            pet.setFlipX(!exitLeft);
+            const exitX = exitLeft ? -60 : width + 60;
+            const exitY = Phaser.Math.Between(550, 650);
+
+            const exitBobTween = this.tweens.add({
+              targets: pet,
+              y: exitY - 4,
+              duration: 150,
+              yoyo: true,
+              repeat: -1,
+              ease: 'Sine.easeInOut',
+            });
+
+            this.tweens.add({
+              targets: pet,
+              x: exitX,
+              y: exitY,
+              duration: 2200,
+              ease: 'Linear',
+              onComplete: () => {
+                exitBobTween.stop();
+                pet.destroy();
+              },
+            });
+          },
+        });
+      },
+    });
+  }
+
+  /**
+   * Rebuilds and synchronizes all pet poop piles on this active street screen
+   */
+  private rebuildSidewalkPoopVisuals() {
+    const store = useGameStore.getState();
+    const currentMesses = store.sidewalkMesses.filter((m) => m.streetScreen === this.currentStreetScreen);
+    const activeMessIds = new Set(currentMesses.map((m) => m.id));
+
+    // Remove old visuals not on this screen
+    this.sidewalkPoopVisuals.forEach((container, messId) => {
+      if (!activeMessIds.has(messId)) {
+        container.destroy();
+        this.sidewalkPoopVisuals.delete(messId);
+      }
+    });
+
+    // Create visuals for current screen
+    currentMesses.forEach((mess) => {
+      if (this.sidewalkPoopVisuals.has(mess.id)) return;
+
+      const container = this.add.container(mess.x, mess.y);
+      container.setDepth(mess.y);
+
+      // 1. Shadow
+      const shadow = this.add.ellipse(0, 14, 38, 8, 0x000000, 0.35);
+
+      // 2. Poop Sprite
+      const poopSprite = this.add.sprite(0, 0, 'prop_pet_poop');
+      poopSprite.setScale(0.9);
+
+      // Subtle breathing pulse
+      this.tweens.add({
+        targets: poopSprite,
+        scaleX: 0.95,
+        scaleY: 0.86,
+        duration: 550,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+
+      // 3. Warning Alert Badge Overhead
+      const badgeY = -38;
+      const badgeBg = this.add.rectangle(0, badgeY, 134, 22, 0xdc2626, 0.94)
+        .setStrokeStyle(1.5, 0xfde047);
+      badgeBg.isFilled = true;
+
+      const badgeText = this.add.text(0, badgeY, '⚠️ DỌN DẸP (+5 XP)', {
+        fontFamily: "'Segoe UI', Roboto, sans-serif",
+        fontSize: '10px',
+        fontStyle: 'bold',
+        color: '#ffffff',
+      }).setOrigin(0.5);
+
+      // Badge gentle float tween
+      this.tweens.add({
+        targets: [badgeBg, badgeText],
+        y: badgeY - 5,
+        duration: 480,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+
+      // 4. Interactive Hit Zone (click to clean)
+      const hitZone = this.add.rectangle(0, 0, 70, 60, 0x000000, 0);
+      hitZone.setInteractive({ useHandCursor: true });
+      hitZone.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        pointer.event.stopPropagation();
+        this.cleanPoop(mess.id, mess.x, mess.y);
+      });
+
+      container.add([shadow, poopSprite, badgeBg, badgeText, hitZone]);
+      this.sidewalkPoopVisuals.set(mess.id, container);
+    });
+  }
+
+  /**
+   * Cleans up the pet mess, grants +5 XP, and plays broom & sparkle effects
+   */
+  private cleanPoop(messId: string, x: number, y: number) {
+    const store = useGameStore.getState();
+    const success = store.cleanSidewalkMess(messId);
+    if (!success) return;
+
+    // Visual broom sweeping effect
+    const broom = this.add.sprite(x + 20, y - 24, 'prop_cleaning_broom');
+    broom.setScale(1.1);
+    broom.setDepth(y + 20);
+    broom.setOrigin(0.8, 0.8);
+
+    this.tweens.add({
+      targets: broom,
+      angle: -40,
+      duration: 140,
+      yoyo: true,
+      repeat: 3,
+      ease: 'Sine.easeInOut',
+      onComplete: () => {
+        this.tweens.add({
+          targets: broom,
+          alpha: 0,
+          scale: 0.5,
+          duration: 250,
+          onComplete: () => broom.destroy(),
+        });
+      },
+    });
+
+    // Sparkles floating up
+    for (let i = 0; i < 4; i++) {
+      const sparkle = this.add.text(x + Phaser.Math.Between(-25, 25), y - 10, '✨', {
+        fontSize: `${Phaser.Math.Between(16, 22)}px`,
+      }).setOrigin(0.5).setDepth(y + 25);
+
+      this.tweens.add({
+        targets: sparkle,
+        y: y - 55 - Phaser.Math.Between(10, 30),
+        alpha: 0,
+        scale: 1.4,
+        duration: 700 + i * 150,
+        ease: 'Sine.easeOut',
+        onComplete: () => sparkle.destroy(),
+      });
+    }
+
+    this.showFloatingMessage(x, y - 60, '🧹 +5 XP (ĐÃ DỌN SẠCH!)');
   }
 
   update(time: number, delta: number) {
@@ -1422,6 +1750,18 @@ export class StreetScene extends Phaser.Scene {
     // 5. Handle Player Movement with natural animation
     this.updatePlayerMovement(deltaSeconds);
     this.updateSidewalkWalkers(deltaSeconds);
+
+    // 5.5 Proximity poop cleaning (when player walks near a mess on current street)
+    if (this.player && this.sidewalkPoopVisuals.size > 0) {
+      store.sidewalkMesses.forEach((mess) => {
+        if (mess.streetScreen === this.currentStreetScreen) {
+          const dist = Math.hypot(this.player.x - mess.x, this.player.y - mess.y);
+          if (dist < 85) {
+            this.cleanPoop(mess.id, mess.x, mess.y);
+          }
+        }
+      });
+    }
 
     // 6. Update Customers Visuals along the Walk Zone
     this.updateCustomerEntities(deltaSeconds);

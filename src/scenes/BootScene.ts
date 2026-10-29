@@ -104,6 +104,19 @@ export class BootScene extends Phaser.Scene {
     for (let s = 1; s <= 9; s++) {
       this.load.image(`background_street_${s}`, `assets/background_street_${s}.png`);
     }
+
+    // 6. Realistic Street Vehicles
+    this.load.image('car_sedan_white', 'assets/vehicles/car_sedan_white.png');
+    this.load.image('car_taxi_green', 'assets/vehicles/car_taxi_green.png');
+    this.load.image('car_suv_red', 'assets/vehicles/car_suv_red.png');
+    this.load.image('car_pickup_blue', 'assets/vehicles/car_pickup_blue.png');
+    this.load.image('car_delivery_van', 'assets/vehicles/car_delivery_van.png');
+
+    // 7. Pets & Sidewalk Cleanup Props
+    this.load.image('pet_dog_chibi', 'assets/props/pet_dog_chibi.png');
+    this.load.image('pet_cat_chibi', 'assets/props/pet_cat_chibi.png');
+    this.load.image('prop_pet_poop', 'assets/props/prop_pet_poop.png');
+    this.load.image('prop_cleaning_broom', 'assets/props/prop_cleaning_broom.png');
   }
 
   create() {

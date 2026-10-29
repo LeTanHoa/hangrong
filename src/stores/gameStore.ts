@@ -6,6 +6,7 @@ import {
   Order,
   Quest,
   SaveSchema,
+  SidewalkMess,
   TimeOfDay,
   WeatherType
 } from '../types/game';
@@ -26,7 +27,7 @@ export interface ToastMessage {
   id: string;
   title: string;
   message: string;
-  type: 'success' | 'error' | 'info' | 'money';
+  type: 'success' | 'error' | 'info' | 'money' | 'warning' | 'achievement';
 }
 
 const DEFAULT_STAFF_MAP: Record<string, boolean> = INITIAL_STAFF.reduce((acc, s) => {
@@ -130,12 +131,16 @@ interface GameState {
   autoCookingRemainingSeconds: number;
   toasts: ToastMessage[];
   settings: GameSettings;
+  sidewalkMesses: SidewalkMess[];
 
   // Tutorial
   tutorialCompleted: boolean;
   tutorialStep: number; // 0 to 10
 
   // Actions
+  addXP: (amount: number, reason?: string) => void;
+  spawnSidewalkMess: (mess: SidewalkMess) => void;
+  cleanSidewalkMess: (messId: string) => boolean;
   initGame: () => Promise<void>;
   tick: (deltaSeconds: number) => void;
   spawnCustomerOrder: (tableIdx?: number) => void;
@@ -251,6 +256,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   autoCookingOrderId: null,
   autoCookingRemainingSeconds: 0,
   toasts: [],
+  sidewalkMesses: [],
   settings: {
     soundEnabled: true,
     musicEnabled: true,
@@ -1266,6 +1272,56 @@ export const useGameStore = create<GameState>((set, get) => ({
     get().saveCurrentGame();
   },
 
+  addXP: (amount: number, reason?: string) => {
+    const state = get();
+    const newXP = state.xp + amount;
+    const { level: newLevel } = calculateLevelFromXP(newXP);
+    set({ xp: newXP, level: newLevel });
+    if (newLevel > state.level) {
+      sounds.playLevelUp();
+      get().addToast('Lên Cấp Mới!', `Chúc mừng bạn đã đạt Cấp ${newLevel}!`, 'achievement');
+    }
+    if (reason) {
+      get().addToast('Thưởng Kinh Nghiệm', `+${amount} XP (${reason})`, 'success');
+    }
+  },
+
+  spawnSidewalkMess: (mess: SidewalkMess) => {
+    set((prev) => ({
+      sidewalkMesses: [...prev.sidewalkMesses, mess],
+    }));
+    sounds.playAlert();
+    const animalName = mess.animalType === 'dog' ? 'Chú chó vàng' : 'Mèo hoang';
+    get().addToast(
+      '⚠️ Cảnh báo phóng uế bừa bãi!',
+      `${animalName} vừa phóng uế trên vỉa hè Phố ${mess.streetScreen}! Hãy đến dọn dẹp ngay (+5 XP)!`,
+      'warning'
+    );
+  },
+
+  cleanSidewalkMess: (messId: string) => {
+    const state = get();
+    const mess = state.sidewalkMesses.find((m) => m.id === messId);
+    if (!mess) return false;
+
+    // Remove mess and grant reputation bonus
+    set((prev) => ({
+      sidewalkMesses: prev.sidewalkMesses.filter((m) => m.id !== messId),
+      reputationRating: Math.min(5.0, Number((prev.reputationRating + 0.05).toFixed(2))),
+    }));
+
+    // Mandatory reward: +5 XP as requested
+    get().addXP(5);
+    sounds.playCash();
+    get().addToast(
+      '🧹 Đã dọn sạch vỉa hè!',
+      'Vỉa hè đã sạch bóng tinh tươm! Bạn được +5 XP và tăng uy tín con phố!',
+      'success'
+    );
+    get().saveCurrentGame();
+    return true;
+  },
+
   endCurrentDay: () => {
     const state = get();
     const loc = LOCATION_MAP[state.currentLocationId] || LOCATION_MAP['sidewalk_start'];
@@ -1367,6 +1423,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       activeModal: null,
       orders: [],
       quests: resetQuests,
+      sidewalkMesses: [],
       currentDayStats: {
         revenue: 0,
         cogs: 0,

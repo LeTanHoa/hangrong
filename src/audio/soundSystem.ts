@@ -172,6 +172,30 @@ class SoundSystem {
     osc.stop(now + 0.5);
   }
 
+  public playAlert() {
+    if (!this.soundEnabled || typeof window === 'undefined') return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.setValueAtTime(660, now + 0.12);
+    osc.frequency.setValueAtTime(880, now + 0.24);
+
+    gain.gain.setValueAtTime(0.35 * this.soundVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.45);
+  }
+
   public playChop() {
     if (!this.soundEnabled || typeof window === 'undefined') return;
     this.initContext();

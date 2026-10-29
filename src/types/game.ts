@@ -217,6 +217,15 @@ export interface DailyFinancialRecord {
   wastedIngredientsCost: number;
 }
 
+export interface SidewalkMess {
+  id: string;
+  streetScreen: number;
+  x: number;
+  y: number;
+  animalType: 'dog' | 'cat';
+  createdAt: number;
+}
+
 export interface GameSettings {
   soundEnabled: boolean;
   musicEnabled: boolean;

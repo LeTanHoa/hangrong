@@ -169,6 +169,26 @@ export const TopHUD: React.FC = () => {
         </div>
       </div>
 
+      {/* SIDEWALK MESS WARNING ALERT PILL */}
+      {store.sidewalkMesses && store.sidewalkMesses.length > 0 && (
+        <div className="flex items-center gap-1 pointer-events-auto">
+          <button
+            onClick={() => {
+              sounds.playClick();
+              const firstMess = store.sidewalkMesses[0];
+              const event = new CustomEvent('nav_to_screen', { detail: { screen: firstMess.streetScreen } });
+              window.dispatchEvent(event);
+            }}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 rounded-full bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-[10px] sm:text-xs border border-amber-300/80 shadow-lg shadow-rose-950/60 animate-bounce active:scale-95 transition"
+            title="Bấm để đến ngay phố có chó mèo phóng uế"
+          >
+            <span>💩</span>
+            <span className="hidden sm:inline">Cảnh Báo:</span>
+            <span>Phố {store.sidewalkMesses[0].streetScreen} có phóng uế! (Dọn +5 XP)</span>
+          </button>
+        </div>
+      )}
+
       {/* RIGHT: Compact Action Group & Single Unified Menu Button */}
       <div className="relative flex items-center gap-1 pointer-events-auto shrink-0" ref={menuRef}>
         {/* Fullscreen Button for instant full immersion */}
