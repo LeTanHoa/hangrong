@@ -2040,8 +2040,9 @@ export class StreetScene extends Phaser.Scene {
         const bubbleBg = this.add.sprite(0, 0, 'speech_bubble');
         bubbleBg.setScale(1.0);
 
-        const bubbleIcon = this.add.text(0, -10, recipe?.icon || '🥖', {
-          fontSize: '32px',
+        const bubbleIcon = this.add.text(0, -13, recipe?.icon || '🥖', {
+          fontSize: '24px',
+          padding: { top: 8, bottom: 8, left: 8, right: 8 },
         });
         bubbleIcon.setOrigin(0.5);
 

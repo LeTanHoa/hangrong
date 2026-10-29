@@ -130,19 +130,19 @@ export class BootScene extends Phaser.Scene {
   }
 
   private createEnvironmentTextures() {
-    // Speech Thought Bubble (HD 2x)
+    // Speech Thought Bubble (HD 2x) with generous margins so food icons never clip
     const bubbleCanvas = document.createElement('canvas');
-    bubbleCanvas.width = 108;
-    bubbleCanvas.height = 92;
+    bubbleCanvas.width = 120;
+    bubbleCanvas.height = 100;
     const bbCtx = bubbleCanvas.getContext('2d')!;
     bbCtx.fillStyle = '#ffffff';
     bbCtx.beginPath();
-    bbCtx.roundRect(8, 8, 92, 60, 16);
+    bbCtx.roundRect(6, 6, 108, 70, 18);
     bbCtx.fill();
     bbCtx.beginPath();
-    bbCtx.moveTo(46, 68);
-    bbCtx.lineTo(54, 84);
-    bbCtx.lineTo(62, 68);
+    bbCtx.moveTo(50, 76);
+    bbCtx.lineTo(60, 94);
+    bbCtx.lineTo(70, 76);
     bbCtx.closePath();
     bbCtx.fill();
     bbCtx.strokeStyle = '#cbd5e1';

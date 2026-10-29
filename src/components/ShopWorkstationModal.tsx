@@ -4,6 +4,7 @@ import { getShopSpecialization, ShopServiceItem } from '../data/shopServices';
 import {
   SHOP_MAP,
   STREET_SHOPS,
+  getShopPrerequisite,
   getRequiredReputationForShop,
   getRequiredCartTierForShop,
   getShopUpgradeCost,
@@ -51,6 +52,26 @@ export const ShopWorkstationModal: React.FC = () => {
 
   const trafficTier = shopInfo?.trafficTier || 'MEDIUM';
   const trafficLabel = shopInfo?.trafficLabel || 'Vừa phải';
+
+  // Shop unlock conditions & prerequisites
+  const prerequisite = getShopPrerequisite(shopId);
+  const meetsPrerequisite = !prerequisite || (store.shopLevels[prerequisite.id] || 0) > 0;
+  const reqLevel = shopInfo?.requiredLevel || 1;
+  const meetsLevel = store.level >= reqLevel;
+  const reqCost = shopInfo?.unlockCost || 0;
+  const meetsCost = store.money >= reqCost;
+  const reqRep = shopInfo ? getRequiredReputationForShop(shopInfo) : 3.0;
+  const meetsReputation = store.reputationRating >= reqRep;
+  const reqCartTier = shopInfo ? getRequiredCartTierForShop(shopInfo) : 1;
+  const meetsCartTier = store.cartTier >= reqCartTier;
+
+  const canUnlockShop =
+    !isOwned &&
+    meetsPrerequisite &&
+    meetsLevel &&
+    meetsCost &&
+    meetsReputation &&
+    meetsCartTier;
 
   const trafficBadge = (() => {
     switch (trafficTier) {
@@ -358,15 +379,172 @@ export const ShopWorkstationModal: React.FC = () => {
                 </div>
               )}
             </div>
-            {/* If shop is unowned: Unlock Callout */}
+            {/* If shop is unowned: Comprehensive Unlock Checklist */}
             {!isOwned && shopInfo && (
-              <div className="p-2 rounded-xl bg-amber-950/40 border border-amber-500/40 text-center">
-                <div className="text-xs font-black text-amber-300 mb-1">Mặt Bằng Chưa Mở Khóa</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-slate-950/95 border border-amber-500/40 flex flex-col gap-2 shadow-lg shrink-0">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-black text-amber-300 uppercase tracking-wide truncate">
+                      Điều Kiện Mở Cửa Hàng
+                    </span>
+                  </div>
+                  <span
+                    className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase shrink-0 ${
+                      canUnlockShop
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                    }`}
+                  >
+                    {canUnlockShop ? 'Đủ điều kiện' : 'Chưa đủ điều kiện'}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1 text-[10px]">
+                  {/* 1. Chi phí mở khóa */}
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Coins className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-200 block truncate">
+                          Vốn mở khóa: {formatVND(reqCost)}
+                        </span>
+                        <span className="text-[9px] text-slate-400 block truncate">
+                          Số dư hiện có: {formatVND(store.money)}
+                        </span>
+                      </div>
+                    </div>
+                    {meetsCost ? (
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black shrink-0 flex items-center gap-0.5">
+                        <Check className="w-2.5 h-2.5" /> Đạt
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[9px] font-black shrink-0">
+                        Thiếu {formatVND(reqCost - store.money)}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 2. Cấp độ người chơi */}
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Award className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-200 block truncate">
+                          Cấp độ: Cấp {reqLevel}
+                        </span>
+                        <span className="text-[9px] text-slate-400 block truncate">
+                          Hiện tại: Cấp {store.level}
+                        </span>
+                      </div>
+                    </div>
+                    {meetsLevel ? (
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black shrink-0 flex items-center gap-0.5">
+                        <Check className="w-2.5 h-2.5" /> Đạt
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[9px] font-black shrink-0">
+                        Cần Cấp {reqLevel}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 3. Cửa hàng tiên quyết */}
+                  {prerequisite && (
+                    <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <Store className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                        <div className="min-w-0">
+                          <span className="font-bold text-slate-200 block truncate">
+                            Mặt bằng trước: {prerequisite.name}
+                          </span>
+                          <span className="text-[9px] text-slate-400 block truncate">
+                            Trạng thái: {meetsPrerequisite ? 'Đã sở hữu' : 'Chưa mở khóa'}
+                          </span>
+                        </div>
+                      </div>
+                      {meetsPrerequisite ? (
+                        <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black shrink-0 flex items-center gap-0.5">
+                          <Check className="w-2.5 h-2.5" /> Đạt
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[9px] font-black shrink-0">
+                          Chưa mở
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 4. Cấp xe đẩy bán hàng */}
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-200 block truncate">
+                          Xe bán hàng: Cấp {reqCartTier}
+                        </span>
+                        <span className="text-[9px] text-slate-400 block truncate">
+                          Hiện tại: Cấp {store.cartTier}
+                        </span>
+                      </div>
+                    </div>
+                    {meetsCartTier ? (
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black shrink-0 flex items-center gap-0.5">
+                        <Check className="w-2.5 h-2.5" /> Đạt
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[9px] font-black shrink-0">
+                        Cần Cấp {reqCartTier}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 5. Điểm uy tín con phố */}
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Star className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-200 block truncate">
+                          Uy tín con phố: {reqRep.toFixed(1)}⭐
+                        </span>
+                        <span className="text-[9px] text-slate-400 block truncate">
+                          Hiện tại: {store.reputationRating.toFixed(1)}⭐
+                        </span>
+                      </div>
+                    </div>
+                    {meetsReputation ? (
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black shrink-0 flex items-center gap-0.5">
+                        <Check className="w-2.5 h-2.5" /> Đạt
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[9px] font-black shrink-0">
+                        Cần {reqRep.toFixed(1)}⭐
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Unlock Action Button */}
                 <button
                   onClick={handleBuyShop}
-                  className="w-full py-1.5 px-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs shadow active:scale-95 transition"
+                  disabled={!canUnlockShop}
+                  className={`w-full py-2 px-2.5 rounded-xl font-black text-xs uppercase tracking-wide shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 ${
+                    canUnlockShop
+                      ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 text-slate-950 hover:brightness-110 shadow-amber-950/50'
+                      : 'bg-slate-800/80 border border-slate-700/60 text-slate-500 cursor-not-allowed'
+                  }`}
                 >
-                  Mở Khóa ({formatVND(shopInfo.unlockCost)})
+                  {canUnlockShop ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      <span>MỞ KHÓA NGAY ({formatVND(reqCost)})</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+                      <span>CHƯA ĐỦ ĐIỀU KIỆN MỞ KHÓA</span>
+                    </>
+                  )}
                 </button>
               </div>
             )}
@@ -684,18 +862,37 @@ export const ShopWorkstationModal: React.FC = () => {
                 </div>
 
                 {/* Compact Start Button pinned to bottom - Never Overflows */}
-                <button
-                  onClick={() => handleStartService(selectedService)}
-                  disabled={!isOwned}
-                  className={`w-full py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wide shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 shrink-0 ${
-                    !isOwned
-                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-slate-950 shadow-orange-950/40 hover:from-orange-400 hover:to-yellow-400'
-                  }`}
-                >
-                  <Play className="w-3.5 h-3.5 fill-current shrink-0" />
-                  <span className="truncate">BẮT ĐẦU THAO TÁC NGHỀ NGHIỆP</span>
-                </button>
+                {!isOwned ? (
+                  <button
+                    onClick={canUnlockShop ? handleBuyShop : undefined}
+                    disabled={!canUnlockShop}
+                    className={`w-full py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wide shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 shrink-0 ${
+                      canUnlockShop
+                        ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500 text-slate-950 hover:brightness-110 shadow-emerald-950/40'
+                        : 'bg-slate-800/80 text-slate-500 border border-slate-700/60 cursor-not-allowed'
+                    }`}
+                  >
+                    {canUnlockShop ? (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">ĐỦ ĐIỀU KIỆN • MỞ KHÓA MẶT BẰNG ({formatVND(reqCost)})</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <span className="truncate">CẦN MỞ KHÓA MẶT BẰNG ĐỂ BẮT ĐẦU</span>
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleStartService(selectedService)}
+                    className="w-full py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs uppercase tracking-wide shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 shrink-0 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-slate-950 shadow-orange-950/40 hover:from-orange-400 hover:to-yellow-400"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current shrink-0" />
+                    <span className="truncate">BẮT ĐẦU THAO TÁC NGHỀ NGHIỆP</span>
+                  </button>
+                )}
               </div>
             ) : null}
           </div>
