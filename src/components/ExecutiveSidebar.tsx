@@ -15,6 +15,7 @@ import {
   Users,
   Smartphone,
   ChefHat,
+  ShoppingCart,
   Bell,
   Bot,
   FastForward,
@@ -474,17 +475,17 @@ export const ExecutiveSidebar: React.FC = () => {
         {/* ================= 3. ULTRA-SLIM FOOTER ACTION DOCK ================= */}
         <div className="p-2 border-t border-slate-800/80 bg-slate-900/95 flex flex-col gap-1 shrink-0">
           {/* Main Action Buttons */}
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-3 gap-1">
             <button
               onClick={() => {
                 sounds.playClick();
                 store.openModal('SMARTPHONE');
                 if (isMobile) setIsDrawerOpen(false);
               }}
-              className="relative flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-gradient-to-r from-orange-600 to-rose-600 text-white font-extrabold text-xs shadow active:scale-95 transition"
+              className="relative flex items-center justify-center gap-1 py-1.5 px-1 rounded-lg bg-gradient-to-r from-orange-600 to-rose-600 text-white font-extrabold text-[11px] shadow active:scale-95 transition"
             >
-              <Smartphone className="w-3 h-3" />
-              <span>Điện Thoại</span>
+              <Smartphone className="w-3 h-3 shrink-0" />
+              <span className="truncate">Điện Thoại</span>
               {hasClaimableQuest && (
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full ring-1 ring-white animate-pulse" />
               )}
@@ -496,10 +497,23 @@ export const ExecutiveSidebar: React.FC = () => {
                 store.openCookingStation();
                 if (isMobile) setIsDrawerOpen(false);
               }}
-              className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-gradient-to-r from-amber-600 to-yellow-600 text-white font-extrabold text-xs shadow active:scale-95 transition"
+              className="flex items-center justify-center gap-1 py-1.5 px-1 rounded-lg bg-gradient-to-r from-amber-600 to-yellow-600 text-white font-extrabold text-[11px] shadow active:scale-95 transition"
             >
-              <ChefHat className="w-3 h-3" />
-              <span>Nấu Ăn</span>
+              <ChefHat className="w-3 h-3 shrink-0" />
+              <span className="truncate">Nấu Ăn</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playClick();
+                store.openSupermarket();
+                if (isMobile) setIsDrawerOpen(false);
+              }}
+              className="flex items-center justify-center gap-1 py-1.5 px-1 rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 text-white font-extrabold text-[11px] shadow active:scale-95 transition"
+              title="Vào Siêu Thị Co.opmart"
+            >
+              <ShoppingCart className="w-3 h-3 shrink-0" />
+              <span className="truncate">Siêu Thị</span>
             </button>
           </div>
 

@@ -5,6 +5,7 @@ import { CookingModal } from './components/CookingModal';
 import { SmartphoneModal } from './components/SmartphoneModal';
 import { DayEndReportModal } from './components/DayEndReportModal';
 import { ShopWorkstationModal } from './components/ShopWorkstationModal';
+import { SupermarketModal } from './components/SupermarketModal';
 import { TutorialOverlay } from './components/TutorialOverlay';
 import { ToastContainer } from './components/ToastContainer';
 import { OrientationHint } from './components/OrientationHint';
@@ -60,6 +61,7 @@ export const App: React.FC = () => {
       {/* Modals */}
       {store.activeModal === 'COOKING' && <CookingModal />}
       {store.activeModal === 'SHOP_WORKSTATION' && <ShopWorkstationModal />}
+      {store.activeModal === 'SUPERMARKET' && <SupermarketModal />}
       {store.activeModal === 'SMARTPHONE' && <SmartphoneModal />}
       {store.activeModal === 'DAY_END' && <DayEndReportModal />}
     </main>

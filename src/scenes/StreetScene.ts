@@ -508,6 +508,10 @@ export class StreetScene extends Phaser.Scene {
         const openShop = () => {
           if (useGameStore.getState().activeModal) return;
           sounds.playClick();
+          if (shop.shopId === 'coop_hypermarket') {
+            store.openSupermarket();
+            return;
+          }
           store.openShopWorkstation(shop.shopId);
         };
 
@@ -593,6 +597,10 @@ export class StreetScene extends Phaser.Scene {
         shopZone.on('pointerdown', () => {
           if (useGameStore.getState().activeModal) return;
           sounds.playClick();
+          if (shop.shopId === 'coop_hypermarket') {
+            store.openSupermarket();
+            return;
+          }
           store.openShopWorkstation(shop.shopId);
         });
 

@@ -66,6 +66,7 @@ export type ModalType =
   | 'SETTINGS'
   | 'QUESTS'
   | 'SHOP_WORKSTATION'
+  | 'SUPERMARKET'
   | null;
 
 interface GameState {
@@ -148,6 +149,8 @@ interface GameState {
   unlockRecipe: (recipeId: string) => boolean;
   openCookingStation: (recipeId?: string) => void;
   openShopWorkstation: (shopId: string, serviceId?: string) => void;
+  openSupermarket: () => void;
+  checkoutSupermarket: (cartItems: { ingredientId: string; quantity: number; cost: number }[]) => boolean;
   generateShopCustomerRequest: (shopId: string) => void;
   fulfillShopCustomerRequest: (shopId: string) => void;
   finishCooking: (recipeId: string, qualityMultiplier?: number, orderId?: string) => boolean;
@@ -682,6 +685,63 @@ export const useGameStore = create<GameState>((set, get) => ({
       selectedShopId: shopId,
       targetServiceId: serviceId || null,
     });
+  },
+
+  openSupermarket: () => {
+    sounds.playClick();
+    set({ activeModal: 'SUPERMARKET' });
+  },
+
+  checkoutSupermarket: (cartItems: { ingredientId: string; quantity: number; cost: number }[]) => {
+    const state = get();
+    const totalCost = cartItems.reduce((acc, item) => acc + item.cost, 0);
+    const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+    if (totalItems <= 0) {
+      get().addToast('Giỏ hàng trống!', 'Vui lòng chọn hàng từ các kệ trước khi ra quầy tính tiền.', 'error');
+      return false;
+    }
+
+    if (state.money < totalCost) {
+      sounds.playAngry();
+      get().addToast('Không đủ tiền!', `Bạn cần ${totalCost.toLocaleString('vi-VN')}đ để thanh toán giỏ hàng.`, 'error');
+      return false;
+    }
+
+    const currentTotal = state.getTotalStoredItemsCount();
+    const maxCapacity = state.getMaxStorageCapacity();
+    if (currentTotal + totalItems > maxCapacity) {
+      sounds.playAngry();
+      get().addToast(
+        'Kho hàng không đủ chỗ!',
+        `Kho chỉ chứa thêm được ${Math.max(0, maxCapacity - currentTotal)} món. Hãy dọn kho hoặc nâng cấp xe bán hàng!`,
+        'error'
+      );
+      return false;
+    }
+
+    sounds.playCash();
+    set((prev) => {
+      const nextInv = { ...prev.inventory };
+      cartItems.forEach((ci) => {
+        nextInv[ci.ingredientId] = (nextInv[ci.ingredientId] || 0) + ci.quantity;
+      });
+
+      return {
+        money: prev.money - totalCost,
+        inventory: nextInv,
+        xp: prev.xp + 25,
+        reputationRating: Math.min(5.0, Number((prev.reputationRating + 0.05).toFixed(2))),
+      };
+    });
+
+    get().addToast(
+      'Thanh toán Co.opmart thành công!',
+      `Đã chuyển ${totalItems} món vào kho hàng (+25 XP, +0.05⭐ Uy tín)!`,
+      'success'
+    );
+    get().saveCurrentGame();
+    return true;
   },
 
   generateShopCustomerRequest: (shopId: string) => {

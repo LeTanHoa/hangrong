@@ -563,6 +563,29 @@ export const ShopWorkstationModal: React.FC = () => {
               </button>
             )}
 
+            {/* Siêu Thị Co.opmart Quick Link */}
+            {(shopId === 'coop_hypermarket' || shopId.startsWith('coop_')) && (
+              <button
+                onClick={() => {
+                  store.openSupermarket();
+                }}
+                className="w-full p-2.5 rounded-xl bg-gradient-to-r from-sky-900/60 via-blue-900/60 to-sky-900/60 hover:from-sky-800/80 hover:to-blue-800/80 border border-sky-400/50 flex items-center justify-between text-left transition active:scale-95 shadow-md"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🛒</span>
+                  <div>
+                    <span className="text-xs font-black text-sky-200 block">
+                      Vào Siêu Thị Mua Sắm
+                    </span>
+                    <span className="text-[9px] text-sky-300/80 block">
+                      Đi dạo • Nhặt hàng vào giỏ • Ra quầy tính tiền
+                    </span>
+                  </div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-sky-300" />
+              </button>
+            )}
+
             {/* Shop Upgrade Bar */}
             {isOwned && shopInfo && shopLevel < MAX_SHOP_LEVEL && (() => {
               const nextLevel = shopLevel + 1;

@@ -281,6 +281,35 @@ export const SmartphoneModal: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Banner Không Gian Mua Sắm Siêu Thị Co.opmart */}
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 border border-sky-500/40 shadow-sm">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <img
+                      src="/assets/logos/coopmart_badge.png"
+                      alt="Coopmart"
+                      className="w-8 h-8 object-contain rounded-lg p-0.5 bg-white shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <span className="text-xs font-black text-sky-200 block truncate">
+                        Không Gian Mua Sắm: Đại Siêu Thị Co.opmart
+                      </span>
+                      <span className="text-[10px] text-slate-300 block truncate">
+                        Tự tay đẩy xe giỏ đi dạo các kệ hàng & ra quầy thu ngân tính tiền
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      sounds.playClick();
+                      store.openSupermarket();
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:brightness-110 text-white font-black text-xs shrink-0 shadow active:scale-95 transition flex items-center gap-1"
+                  >
+                    <span>Vào Siêu Thị</span>
+                    <span>🛒</span>
+                  </button>
+                </div>
+
                 {/* Instant Search Bar */}
                 <div
                   className="flex items-center gap-2 min-w-0"
@@ -939,11 +968,19 @@ export const SmartphoneModal: React.FC = () => {
                         }`}
                       >
                         <div className="flex items-start gap-3 min-w-0">
-                          <img
-                            src={`/assets/characters/${member.id}.png`}
-                            alt={member.name}
-                            className="w-14 h-16 object-contain shrink-0 bg-slate-950/60 p-1 rounded-xl border border-slate-800"
-                          />
+                          <div className="relative w-14 h-16 shrink-0 bg-slate-950/60 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden">
+                            <span className="absolute text-2xl select-none">
+                              {member.avatar}
+                            </span>
+                            <img
+                              src={`/assets/characters/${member.id}.png`}
+                              alt={member.name}
+                              className="relative z-10 w-full h-full object-contain p-1"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                          </div>
                           <div className="flex flex-col flex-1 min-w-0 justify-center">
                             <span className="font-bold text-sm text-white">{member.name}</span>
                             <span className="text-[11px] text-amber-300 font-semibold mt-1">
